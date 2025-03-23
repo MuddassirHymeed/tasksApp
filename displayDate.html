@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Date and Time in javascript</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #c4c3c3;
+        }
+
+        .main {
+            padding: 1vw;
+            background-color: blue;
+        }
+
+        .main .wrapper {
+            background-color: gold;
+            padding: 1vw;
+        }
+
+        .main .wrapper .date-time {
+            background-color: pink;
+            padding: 1vw;
+        }
+
+        .main .wrapper .date-time > h1 {
+            background-color: lightblue;
+            padding: 1vw;
+        }
+
+
+        .main .wrapper .date-time .content {
+            background-color: rgb(230, 173, 207);
+            padding: 1vw;
+        }
+
+        .main .wrapper .date-time .content .headline {
+            padding: 1vw;
+            background-color: black;
+        }
+
+        .main .wrapper .date-time .content .info{
+            padding: 1vw;
+            background-color: rgb(241, 0, 0);
+        }
+
+        .main .wrapper .date-time .content .info > #show-day{
+            padding: 1vw;
+            background-color: rgb(124, 176, 184);
+        }
+
+        .main .wrapper .date-time .content .info > #show-time{
+            padding: 1vw;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="date-time">
+                <h1>Display Date</h1>
+                <div class="content">
+                    <p class="headline">Write a javascript program to display the current date and time in following format.</p>
+                    <p class="day info">Today is : <span id="show-day"></span></p>
+                    <p class="time info">Current Time is : <span id="show-time"></span></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        
+    </script>
+</body>
+</html>
