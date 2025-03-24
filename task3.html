@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Difference by 13</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Karla", sans-serif;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    background-color: #d2c7c7;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+    position: static;
+}
+
+.main .wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main .wrapper .difference{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+    background-color: #f3ebeb;
+    padding: 15px;
+    max-width: 600px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.main .wrapper .difference > h1 {
+    width: 100%;
+    background-color: teal;
+    font-size: 2vw;
+    padding: 5px;
+    color: #000;
+    font-weight: 600;
+    text-align: center;
+}
+
+.main .wrapper .difference .content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.main .wrapper .difference .content .headline {
+    font-size: 1.2vw;
+    padding: 5px;
+    font-weight: 500;
+    color: #000;
+}
+
+.main .wrapper .difference .content input {
+    padding: 5px;
+    width: 100%;
+    font-size: 1.1vw;
+    font-weight: 600;
+    color: #000;
+}
+
+.main .wrapper .difference .content .generated{
+    padding: 0.5vw 1vw;
+    font-size: 1.1vw;
+    font-weight: 600;
+    color: #000;
+}
+
+
+
+
+
+@media (max-width:885px) {
+    .main {
+        width: 100%;
+        height: 100%;
+        position: static;
+    }
+
+    .main .wrapper {
+        width: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .main .wrapper .difference{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 5px;
+        background-color: #f3ebeb;
+        padding: 15px;
+        max-width: 600px;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .main .wrapper .difference > h1 {
+        font-size: 4.8vw;
+    }
+
+    .main .wrapper .difference .content {
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .main .wrapper .difference .content .headline {
+        font-size: 3.7vw;
+    }
+
+    .main .wrapper .difference .content input {
+        font-size: 3.2vw;
+    }
+
+    .main .wrapper .difference .content .generated {
+        padding: 0.5vw 1vw;
+        font-size: 3.5vw;
+        font-weight: 600;
+        color: #000;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="difference">
+                <h1>Differnce by 13</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to get the difference between a given number and 13, if the number is
+                        greater than 13 return double the absolute difference.
+                    </p>
+                    <input type="number" id="given-input-number" placeholder="Enter a given Number">
+                    <input type="number" id="find-absolute-differnce">
+                    <button class="generated">Generate</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        const differnce = document.querySelector('#find-absolute-differnce');
+        const result = document.querySelector('.generated')
+        
+        result.addEventListener('click' , function (e){
+
+            let numberdifference = 13
+            const input = Number(document.querySelector('#given-input-number').value);
+
+            if(input < numberdifference){
+                const normalDiffernce =  input - numberdifference;
+                differnce.value = normalDiffernce;
+                console.log('normal difference' ,normalDiffernce);
+            }
+
+            if(input === numberdifference || input > numberdifference){
+            let subtract =  input - numberdifference;
+            const AbsoDiffernce = subtract * 2
+            differnce.value = AbsoDiffernce;
+            console.log('absolute difference',AbsoDiffernce);
+            }
+
+        },false)
+
+
+    </script>
+</body>
+
+</html>
