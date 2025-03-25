@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sum of Two Numbers</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Karla", sans-serif;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    background-color: #d2c7c7;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+    position: static;
+}
+
+.main .wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main .wrapper .sum-of-two-integer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+    background-color: #f3ebeb;
+    padding: 15px;
+    max-width: 600px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.main .wrapper .sum-of-two-integer > h1 {
+    width: 100%;
+    background-color: teal;
+    font-size: 2vw;
+    padding: 5px;
+    color: #000;
+    font-weight: 600;
+    text-align: center;
+}
+
+.main .wrapper .sum-of-two-integer .content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.main .wrapper .sum-of-two-integer .content .headline {
+    font-size: 1.2vw;
+    padding: 5px;
+    font-weight: 500;
+    color: #000;
+}
+
+.main .wrapper .sum-of-two-integer .content input {
+    padding: 5px;
+    width: 100%;
+    font-size: 1.1vw;
+    font-weight: 600;
+    color: #000;
+}
+
+.main .wrapper .sum-of-two-integer .content .result{
+    padding: 0.5vw 1vw;
+    font-size: 1.1vw;
+    font-weight: 600;
+    color: #000;
+}
+
+
+
+
+
+@media (max-width:885px) {
+    .main {
+        width: 100%;
+        height: 100%;
+        position: static;
+    }
+
+    .main .wrapper {
+        width: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .main .wrapper .sum-of-two-integer{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 5px;
+        background-color: #f3ebeb;
+        padding: 15px;
+        max-width: 600px;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .main .wrapper .sum-of-two-integer > h1 {
+        font-size: 4.8vw;
+    }
+
+    .main .wrapper .sum-of-two-integer .content {
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .main .wrapper .sum-of-two-integer .content .headline {
+        font-size: 3.7vw;
+    }
+
+    .main .wrapper .sum-of-two-integer .content input {
+        font-size: 3.2vw;
+    }
+
+    .main .wrapper .sum-of-two-integer .content .result {
+        padding: 0.5vw 1vw;
+        font-size: 3.5vw;
+        font-weight: 600;
+        color: #000;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="sum-of-two-integer">
+                <h1>Sum of Two Numbers</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to compute the sum of the two given integers. If the two values are same, then returns triple their sum.
+                    </p>
+                    <p class="headline">Blue for normal addtion and Green for triple addtion.</p>
+                    <input type="number" id="f-int" placeholder="Enter a first Number">
+                    <input type="number" id="s-int" placeholder="Enter a Second Number">
+                    <input type="number" id="sum" placeholder="Sum">
+                    <button class="result">Result</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        
+        const resultbtn = document.querySelector('.result').addEventListener('click', function (e) {
+
+            const value1 = parseInt(document.querySelector('#f-int').value)
+            const value2 = parseInt(document.querySelector('#s-int').value)
+            const showSum = document.querySelector('#sum');
+
+            
+            if(value1 !== value2){
+                let addtion  = value1 + value2;
+                showSum.value = addtion
+                showSum.style.color = "blue"
+            }
+            
+            if(value1 === value2){
+                let tripleAddition = (value1 + value2) * 3
+                showSum.value = tripleAddition;
+                showSum.style.color = "green"
+            }
+            
+        } ,false) 
+
+
+    </script>
+
+</body>
+</html>
