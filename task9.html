@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change Temperator</title>
+    <title>Leaf year Calculator</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
 
@@ -37,7 +37,7 @@
             align-items: center;
         }
 
-        .main .wrapper .convert-temp {
+        .main .wrapper .leafyear {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -50,7 +50,7 @@
             border-radius: 10px;
         }
 
-        .main .wrapper .convert-temp>h1 {
+        .main .wrapper .leafyear>h1 {
             width: 100%;
             background-color: teal;
             font-size: 2vw;
@@ -60,7 +60,7 @@
             text-align: center;
         }
 
-        .main .wrapper .convert-temp .content {
+        .main .wrapper .leafyear .content {
             padding: 15px;
             display: flex;
             flex-direction: column;
@@ -69,14 +69,14 @@
             gap: 20px;
         }
 
-        .main .wrapper .convert-temp .content .headline {
+        .main .wrapper .leafyear .content .headline {
             font-size: 1.2vw;
             padding: 5px;
             font-weight: 500;
             color: #000;
         }
 
-        .main .wrapper .convert-temp .content input {
+        .main .wrapper .leafyear .content input {
             padding: 5px;
             width: 100%;
             font-size: 1.1vw;
@@ -84,16 +84,12 @@
             color: #000;
         }
 
-        .main .wrapper .convert-temp .content .convert {
+        .main .wrapper .leafyear .content .guess {
             padding: 0.5vw 1vw;
             font-size: 1.1vw;
             font-weight: 600;
             color: #000;
         }
-
-
-
-
 
         @media (max-width:885px) {
             .main {
@@ -113,7 +109,7 @@
                 align-items: center;
             }
 
-            .main .wrapper .convert-temp {
+            .main .wrapper .leafyear {
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -126,11 +122,11 @@
                 border-radius: 10px;
             }
 
-            .main .wrapper .convert-temp>h1 {
+            .main .wrapper .leafyear>h1 {
                 font-size: 4.8vw;
             }
 
-            .main .wrapper .convert-temp .content {
+            .main .wrapper .leafyear .content {
                 padding: 15px;
                 display: flex;
                 flex-direction: column;
@@ -139,15 +135,15 @@
                 gap: 10px;
             }
 
-            .main .wrapper .convert-temp .content .headline {
+            .main .wrapper .leafyear .content .headline {
                 font-size: 3.7vw;
             }
 
-            .main .wrapper .convert-temp .content input {
+            .main .wrapper .leafyear .content input {
                 font-size: 3.2vw;
             }
 
-            .main .wrapper .convert-temp .content .convert {
+            .main .wrapper .leafyear .content .guess {
                 padding: 0.5vw 1vw;
                 font-size: 3.5vw;
                 font-weight: 600;
@@ -161,64 +157,45 @@
 
     <main class="main" id="main">
         <div class="wrapper">
-            <div class="convert-temp">
-                <h1>Change Temperator</h1>
+            <div class="leafyear">
+                <h1>Leaf year Calculator</h1>
                 <div class="content">
                     <p class="headline">
-                        Write a JavaScript program to convert temperatures to and from Celsius, Fahrenheit.
+                        Write a JavaScript program to determine whether a given year is a leap year in the Gregorian
+                        calendar.
                     </p>
-                    <p class="headline">
-                        [ Formula : c/5 = (f-32)/9 [ where c = temperature in Celsius and f = temperature in Fahrenheit
-                        ]
-                    </p>
-                    <p class="headline">
-                        Expected Output : <br>
-                        60°C is 140 °F <br>
-                        45°F is 7.222222222222222°C
-                    </p>
-                    <input type="number" id="enter-temp-in-f" placeholder="Enter a Temperature in Fahrenheit">
-                    <input type="number" id="enter-temp-in-c" placeholder="Enter a Temperature in Celsius">
-                    <span id="f-to-c"></span>
-                    <span id="c-to-f"></span>
-                    <button class="convert">Convert</button>
+                    <input type="text" id="enter-year" placeholder="Enter year">
+                    <input type="text" id="message-leaf-year">
+                    <button class="guess">Guess</button>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
+        document.querySelector(".guess").addEventListener("click", function () {
+            let yearInput = document.getElementById("enter-year");
+            let messageField = document.getElementById("message-leaf-year");
 
-        document.querySelector(".convert").addEventListener("click", function () {
+            let year = parseInt(yearInput.value);
 
-            let fahrenheitInput = document.getElementById("enter-temp-in-f").value;
-            let celsiusInput = document.getElementById("enter-temp-in-c").value;
-            let fToCResult = document.getElementById("f-to-c");
-            let cToFResult = document.getElementById("c-to-f");
-
-            if (fahrenheitInput !== "") {
-                let celsius = (parseFloat(fahrenheitInput) - 32) * 5 / 9;
-                fToCResult.innerText = `${fahrenheitInput}°F is ${celsius.toFixed()}°C`;
-                fToCResult.style.color = "green"
-                fToCResult.style.width = "100%"
-                fToCResult.style.backgroundColor = '#000'
-                fToCResult.style.padding = "8px"
-            } else {
-                fToCResult.innerText = "";
+            if (!year || year < 0) {
+                messageField.value = "Enter a valid year!";
+                messageField.style.color = "red";
+                return;
             }
 
-            if (celsiusInput !== "") {
-                let fahrenheit = (parseFloat(celsiusInput) * 9 / 5) + 32;
-                cToFResult.innerText = `${celsiusInput}°C is ${fahrenheit.toFixed()}°F`;
-                cToFResult.style.color = "green"
-                cToFResult.style.width = "100%"
-                cToFResult.style.backgroundColor = '#000'
-                cToFResult.style.padding = "8px"
+            if ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)) {
+                messageField.value = "This is a Leap Year";
+                messageField.style.color = "green";
             } else {
-                cToFResult.innerText = "";
+                messageField.value = "Not a Leap Year";
+                messageField.style.color = "purple";
             }
         });
 
     </script>
+
 </body>
 
 </html>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Change Temperator</title>
+    <title>Date Format</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
 
@@ -37,7 +37,7 @@
             align-items: center;
         }
 
-        .main .wrapper .convert-temp {
+        .main .wrapper .date-format {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -50,7 +50,7 @@
             border-radius: 10px;
         }
 
-        .main .wrapper .convert-temp>h1 {
+        .main .wrapper .date-format>h1 {
             width: 100%;
             background-color: teal;
             font-size: 2vw;
@@ -60,7 +60,7 @@
             text-align: center;
         }
 
-        .main .wrapper .convert-temp .content {
+        .main .wrapper .date-format .content {
             padding: 15px;
             display: flex;
             flex-direction: column;
@@ -69,31 +69,23 @@
             gap: 20px;
         }
 
-        .main .wrapper .convert-temp .content .headline {
+        .main .wrapper .date-format .content .headline {
             font-size: 1.2vw;
             padding: 5px;
             font-weight: 500;
             color: #000;
         }
 
-        .main .wrapper .convert-temp .content input {
-            padding: 5px;
+        .main .wrapper .date-format .content .show-formates {
             width: 100%;
-            font-size: 1.1vw;
-            font-weight: 600;
+            padding: 5px;
+            font-size: 1vw;
             color: #000;
         }
 
-        .main .wrapper .convert-temp .content .convert {
-            padding: 0.5vw 1vw;
-            font-size: 1.1vw;
-            font-weight: 600;
-            color: #000;
+        .main .wrapper .date-format .content .show-formates>span {
+            margin: 1vw;
         }
-
-
-
-
 
         @media (max-width:885px) {
             .main {
@@ -113,7 +105,7 @@
                 align-items: center;
             }
 
-            .main .wrapper .convert-temp {
+            .main .wrapper .date-format {
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -126,11 +118,11 @@
                 border-radius: 10px;
             }
 
-            .main .wrapper .convert-temp>h1 {
+            .main .wrapper .date-format>h1 {
                 font-size: 4.8vw;
             }
 
-            .main .wrapper .convert-temp .content {
+            .main .wrapper .date-format .content {
                 padding: 15px;
                 display: flex;
                 flex-direction: column;
@@ -139,20 +131,19 @@
                 gap: 10px;
             }
 
-            .main .wrapper .convert-temp .content .headline {
+            .main .wrapper .date-format .content .headline {
                 font-size: 3.7vw;
             }
 
-            .main .wrapper .convert-temp .content input {
-                font-size: 3.2vw;
-            }
-
-            .main .wrapper .convert-temp .content .convert {
-                padding: 0.5vw 1vw;
+            .main .wrapper .difference .content .show-formates {
                 font-size: 3.5vw;
                 font-weight: 600;
                 color: #000;
             }
+
+            .main .wrapper .date-format .content .show-formates > span {
+            font-size: 2.5vw;
+        }
         }
     </style>
 </head>
@@ -161,64 +152,44 @@
 
     <main class="main" id="main">
         <div class="wrapper">
-            <div class="convert-temp">
-                <h1>Change Temperator</h1>
+            <div class="date-format">
+                <h1>Date Format</h1>
                 <div class="content">
                     <p class="headline">
-                        Write a JavaScript program to convert temperatures to and from Celsius, Fahrenheit.
+                        Write a JavaScript program to get the current date.
+                        Expected Output :
                     </p>
                     <p class="headline">
-                        [ Formula : c/5 = (f-32)/9 [ where c = temperature in Celsius and f = temperature in Fahrenheit
-                        ]
+                        mm-dd-yyyy, mm/dd/yyyy or dd-mm-yyyy, dd/mm/yyyy
                     </p>
-                    <p class="headline">
-                        Expected Output : <br>
-                        60°C is 140 °F <br>
-                        45°F is 7.222222222222222°C
+                    <p class="show-formates">
+                        <span class="month-day-year1"></span>
+                        <span class="month-day-year2"></span>
+                        <span class="day-month-year1"></span>
+                        <span class="day-month-year2"></span>
                     </p>
-                    <input type="number" id="enter-temp-in-f" placeholder="Enter a Temperature in Fahrenheit">
-                    <input type="number" id="enter-temp-in-c" placeholder="Enter a Temperature in Celsius">
-                    <span id="f-to-c"></span>
-                    <span id="c-to-f"></span>
-                    <button class="convert">Convert</button>
                 </div>
             </div>
         </div>
     </main>
-
     <script>
 
-        document.querySelector(".convert").addEventListener("click", function () {
+        document.addEventListener("DOMContentLoaded", () => {
+            const date = new Date();
 
-            let fahrenheitInput = document.getElementById("enter-temp-in-f").value;
-            let celsiusInput = document.getElementById("enter-temp-in-c").value;
-            let fToCResult = document.getElementById("f-to-c");
-            let cToFResult = document.getElementById("c-to-f");
+            // this function for month , day adding 0 ==> like 02 ,04
+            const pad = (num) => (num < 10 ? "0" + num : num);
 
-            if (fahrenheitInput !== "") {
-                let celsius = (parseFloat(fahrenheitInput) - 32) * 5 / 9;
-                fToCResult.innerText = `${fahrenheitInput}°F is ${celsius.toFixed()}°C`;
-                fToCResult.style.color = "green"
-                fToCResult.style.width = "100%"
-                fToCResult.style.backgroundColor = '#000'
-                fToCResult.style.padding = "8px"
-            } else {
-                fToCResult.innerText = "";
-            }
+            const day = pad(date.getDate());
+            const month = pad(date.getMonth() + 1);
+            const year = date.getFullYear();
 
-            if (celsiusInput !== "") {
-                let fahrenheit = (parseFloat(celsiusInput) * 9 / 5) + 32;
-                cToFResult.innerText = `${celsiusInput}°C is ${fahrenheit.toFixed()}°F`;
-                cToFResult.style.color = "green"
-                cToFResult.style.width = "100%"
-                cToFResult.style.backgroundColor = '#000'
-                cToFResult.style.padding = "8px"
-            } else {
-                cToFResult.innerText = "";
-            }
+            document.querySelector(".month-day-year1").textContent = `${month}-${day}-${year}`;
+            document.querySelector(".month-day-year2").textContent = `${month}/${day}/${year}`;
+            document.querySelector(".day-month-year1").textContent = `${day}-${month}-${year}`;
+            document.querySelector(".day-month-year2").textContent = `${day}/${month}/${year}`;
         });
-
     </script>
-</body>
 
+</body>
 </html>
