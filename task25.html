@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Result</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #d2c7c7;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .mtch-nums {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .mtch-nums>h1 {
+            width: 100%;
+            background-color: teal;
+            font-size: 2vw;
+            padding: 5px;
+            color: #000;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .main .wrapper .mtch-nums .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .main .wrapper .mtch-nums .content .headline {
+            font-size: 1.2vw;
+            padding: 5px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .main .wrapper .mtch-nums .content input {
+            padding: 5px;
+            width: 100%;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .main .wrapper .mtch-nums .content #check-result {
+            padding: 0.5vw 1vw;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+
+
+
+
+        @media (max-width:885px) {
+            .main {
+                width: 100%;
+                height: 100%;
+                position: static;
+            }
+
+            .main .wrapper {
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .main .wrapper .mtch-nums {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 5px;
+                background-color: #f3ebeb;
+                padding: 15px;
+                max-width: 600px;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            .main .wrapper .mtch-nums>h1 {
+                font-size: 4.8vw;
+            }
+
+            .main .wrapper .mtch-nums .content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .main .wrapper .mtch-nums .content .headline {
+                font-size: 3.7vw;
+            }
+
+            .main .wrapper .mtch-nums .content input {
+                font-size: 3.2vw;
+            }
+
+            .main .wrapper .mtch-nums .content #check-result {
+                padding: 0.5vw 1vw;
+                font-size: 3.5vw;
+                font-weight: 600;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="mtch-nums">
+                <h1>Check Result</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to check the total marks of a student in various examinations. The
+                        student will get A+ grade if the total marks are in the range 89..100 inclusive. If the
+                        examination is "Final-exam," the student will get A+ grade only if the total marks are greater
+                        than
+                        or equal to 90. Return true if the student gets an A+ grade or false otherwise.
+                    </p>
+                    <input type="number" id="enter-marks" placeholder="Enter marks">
+
+                    <input type="text" id="enter-grade" placeholder="Regular Result" readonly>
+                    <label>
+                        Click Here To Get Final Result <br> <br>
+                        <input type="checkbox" id="final-exam">
+                    </label>
+                    <input type="text" id="show-final-result" placeholder="Show final result" readonly>
+                    <button id="check-result">Check Result</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const marksInput = document.getElementById("enter-marks");
+            const finalExamCheckbox = document.getElementById("final-exam");
+            const regularResult = document.getElementById("enter-grade");
+            const finalResult = document.getElementById("show-final-result");
+            const checkButton = document.getElementById("check-result");
+
+            checkButton.addEventListener("click", function () {
+                const marks = parseInt(marksInput.value);
+
+                if (isNaN(marks) || marks < 0 || marks > 100) {
+                    alert("Please enter valid marks between 0 and 100.");
+                    return;
+                }
+
+             
+                if (marks >= 89 && marks <= 100) {
+                    regularResult.value = "A+";
+                } else {
+                    regularResult.value = "Less than A+";
+                }
+
+                
+                finalResult.value = "";
+            });
+
+            finalExamCheckbox.addEventListener("change", function () {
+                const marks = parseInt(marksInput.value);
+
+                if (isNaN(marks) || marks < 0 || marks > 100) {
+                    alert("Please enter valid marks between 0 and 100.");
+                    return;
+                }
+
+                if (finalExamCheckbox.checked) {
+                    if (marks >= 90 && marks <= 100) {
+                        finalResult.value = "A+";
+                    } else {
+                        finalResult.value = "Less than A+";
+                    }
+                } else {
+                    finalResult.value = "";
+                }
+            });
+        });
+
+
+    </script>
+
+
+
+</body>
+
+</html>
