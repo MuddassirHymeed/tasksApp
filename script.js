@@ -1,4 +1,6 @@
 let initialTasks = []; 
+
+// fetch data
 async function fetchData() {
     try {
         const response = await fetch('http://localhost:3000/initialTasks');
@@ -13,7 +15,7 @@ async function fetchData() {
 fetchData();
 
 
-// show tasks
+// show all tasks
 function showTaskLists() {
     const ul = document.getElementById('tasklist');
     const showTasks = document.getElementById('taskiframe');
@@ -33,7 +35,7 @@ function showTaskLists() {
 }
 
 
-// sort tasks
+// sort all tasks
 function sortingSidebarLinks() {
     const button = document.getElementById('sorting');
     button.addEventListener('click', () => {
@@ -44,7 +46,7 @@ function sortingSidebarLinks() {
 sortingSidebarLinks();
 
 
-// searching tasks
+// search tasks
 function SearchTasks() {
     const searchInput = document.getElementById('search-bar');
     const ul = document.getElementById('tasklist');
@@ -81,11 +83,9 @@ function SearchTasks() {
         });
     });
 }
-
 SearchTasks()
 
-
-// window search url query parameter
+// search Parameter used for each task
 function updateURLAndLoad(taskFile) {
     const url = new URL(window.location);
     url.searchParams.set('task', taskFile);
@@ -113,3 +113,4 @@ function loadTaskFromQuery() {
         document.getElementById('taskiframe').src = taskFile;
     }
 }
+
