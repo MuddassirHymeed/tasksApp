@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>25 Tasks</title>
+    <meta name="description" content="25 Task List App built with HTML, CSS, and JavaScript">
+    <meta name="keywords" content="Task App, JavaScript Project, Web App, Frontend Development, Task Tracker, HTML5, Local Storage">
+    <meta name="author" content="Muddassir Hymeed">
+    <link rel="shortcut icon" href="/img/tasks-app-favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="/style.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <title>25 Tasks List App</title>
 </head>
-
 <body class="body">
-
-    <div class="sidebar" role="navigation">
+    <div class="sidebar" id="sidebar" role="navigation">
+        <button id="toggle-btn" class="toggle-btn"><i class="ri-home-gear-fill"></i></button>
         <input type="search" placeholder="Search tasks" id="search-bar">
         <div class="heading sorting-links-btn">
             <h2>Tasks</h2>
@@ -22,9 +24,31 @@
 
     <div class="content">
         <iframe id="taskiframe" src=""></iframe>
+        <div class="welcome-container" id="welcome-container">
+            <div class="welcome-content">
+                <h1>Welcome to Tasks List App</h1>
+                <p>Select a task from the sidebar to get started or create a new one.</p>
+                <div class="features">
+                    <div class="feature">
+                        <i class="ri-checkbox-circle-line"></i>
+                        <h3>Organize Tasks</h3>
+                        <p>Keep all your tasks neatly organized in one place.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="ri-search-line"></i>
+                        <h3>Quick Search</h3>
+                        <p>Find any task instantly with our powerful search.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="ri-sort-desc"></i>
+                        <h3>Smart Sorting</h3>
+                        <p>Sort your tasks to prioritize what matters most.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="/script.js"></script>
 </body>
-
 </html>
