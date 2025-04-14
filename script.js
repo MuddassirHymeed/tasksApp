@@ -5,6 +5,10 @@ let currentActiveTaskFile = null;
 const defaultTasksPerPage = 10;
 let totalTaskCount = 0;
 
+// Cache objects
+let allTasksCache = null;
+let paginatedTasksCache = {};
+
 // intial dom loaded
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
@@ -34,13 +38,21 @@ function getLimitForPage(page) {
     return defaultTasksPerPage;
 }
 
-// Fetches paginated task data from the server
+// Fetches paginated task data from the server with caching
 async function fetchPaginatedData(page = 1) {
+    // Return cached data if available
+    if (paginatedTasksCache[page]) {
+        return paginatedTasksCache[page];
+    }
+
     try {
         const limit = getLimitForPage(page);
         const response = await fetch(`http://localhost:3000/initialTasks?_page=${page}&_limit=${limit}`);
         const data = await response.json();
         totalTaskCount = parseInt(response.headers.get('X-Total-Count')) || 0;
+        
+        // Cache the fetched data
+        paginatedTasksCache[page] = data;
         return data;
     } catch (error) {
         console.error("Error fetching paginated data:", error);
@@ -48,17 +60,31 @@ async function fetchPaginatedData(page = 1) {
     }
 }
 
-// Fetches all task data from the server without pagination
+// Fetches all task data from the server with caching
 async function fetchAllData() {
+    // Return cached data if available
+    if (allTasksCache) {
+        return allTasksCache;
+    }
+
     try {
         const response = await fetch('http://localhost:3000/initialTasks');
         const data = await response.json();
         totalTaskCount = data.length;
+        
+        // Cache the fetched data
+        allTasksCache = data;
         return data;
     } catch (error) {
         console.error("Error fetching all data:", error);
         return [];
     }
+}
+
+// Clear cache when needed (e.g., when new tasks might have been added)
+function clearCache() {
+    allTasksCache = null;
+    paginatedTasksCache = {};
 }
 
 // Renders the task list in the sidebar
@@ -129,7 +155,8 @@ async function sortingSidebarLinks() {
             
             renderTaskList(currentPageTasks);
         } else {
-            const tasks = await fetchPaginatedData(currentPage);
+            // Get from cache if available
+            let tasks = paginatedTasksCache[currentPage] || await fetchPaginatedData(currentPage);
             tasks.sort((a, b) =>
                 isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
             );
@@ -164,7 +191,9 @@ function SearchTasks() {
             return;
         }
 
-        currentFilteredTasks = (await fetchAllData()).filter(task => {
+        // Use cached data if available
+        const allTasks = allTasksCache || await fetchAllData();
+        currentFilteredTasks = allTasks.filter(task => {
             const name = task.name.toLowerCase();
             const file = task.file.toLowerCase();
             const wordRegex = new RegExp(`\\b${inputSearchValue}\\b`, 'i');
@@ -316,7 +345,8 @@ async function showTaskLists() {
         renderTaskList(tasksForPage);
         updatePaginationButtons(Math.ceil(currentFilteredTasks.length / defaultTasksPerPage));
     } else {
-        const tasks = await fetchPaginatedData(currentPage);
+        // Use cached data if available
+        const tasks = paginatedTasksCache[currentPage] || await fetchPaginatedData(currentPage);
         renderTaskList(tasks);
         updatePaginationButtons(Math.ceil(totalTaskCount / defaultTasksPerPage));
     }
