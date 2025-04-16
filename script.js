@@ -245,7 +245,6 @@ function updatePaginationButtons(totalPages) {
     paginationContainer.innerHTML = '';
 
     if (totalPages <= 1) return;
-
     const prevButton = document.createElement('button');
     prevButton.textContent = 'Previous';
     prevButton.disabled = currentPage === 1;
