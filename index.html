@@ -20,7 +20,10 @@
             <h2>Tasks</h2>
             <button id="sorting" class="sort-links">Sort</button>
         </div>
-        <ul id="tasklist" role="link"></ul>
+
+        <div id="tasklist-container" style="overflow-y: auto; height: calc(100vh - 200px);">
+            <ul id="tasklist"></ul>
+        </div>
     </div>
 
     <div class="content">
@@ -42,7 +45,7 @@
                     </div>
                     <div class="feature">
                         <i class="ri-sort-desc"></i>
-                        <h3>Smart Sorting</h3>
+                        <h3>Tasks Sorting</h3>
                         <p>Sort your tasks to prioritize what matters most.</p>
                     </div>
                 </div>
