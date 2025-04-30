@@ -1,9 +1,15 @@
 {
   "name": "25tasks",
   "version": "1.0.0",
-  "main": "script.js",
-  "scripts": {
-    "start": "json-server --watch ./database/db.json" 
+  "main": "dist/script.js",
+  "type": "module",
+ "scripts": {
+"dev": "concurrently -n \"VITE,API,TSC\" -c \"bgBlue.bold,bgGreen.bold,bgYellow.bold\" \"vite --port 5173 --host\" \"json-server --watch database/db.json --port 3001\" \"tsc --watch\"",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "serve-json": "json-server --watch database/db.json --port 3001",
+    "tsc": "tsc",
+    "tsc-watch": "tsc --watch"
   },
   "keywords": [],
   "author": "",
@@ -11,5 +17,12 @@
   "description": "",
   "dependencies": {
     "json-server": "^0.17.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "concurrently": "^9.1.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.3"
   }
 }

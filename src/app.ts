@@ -1,39 +1,60 @@
+// task structure
+interface Task {
+    name : string,
+    file : string,
+}
+
+interface TaskListItem extends HTMLLIElement {
+    file : string,
+}
+
 // global state variables
-let currentSearchFilteredTasks = [];
-let isAscending = true;
-let currentActiveTaskFile = null;
+let currentSearchFilteredTasks : Task[] = [];
+let isAscending : boolean = true;
+let currentActiveTaskFile : string | null  = null;
 
 // scroll pagination variables
-let currentpage = 1;
-const tasksperPage = 10;
-let isloading = false;
-let ismoreTasks = true;
-let allTasks = [];
+let currentpage : number = 1;
+const tasksperPage : number = 10;
+let isloading : boolean = false;
+let ismoreTasks : boolean = true;
+let allTasks : Task[] = [];
+
+//json api url
+const api_main_url = '/api';
 
 // DOM vairables
-const sidebar = document.getElementById('sidebar');
-const ul = document.getElementById('tasklist');
-const button = document.getElementById('sorting');
-const toggleBtn = document.getElementById('toggle-btn');
-const searchInput = document.getElementById('search-bar');
-const welcomeContainer = document.getElementById('welcome-container');
-const taskIframe = document.getElementById('taskiframe');
-const tasklistContainer = document.getElementById('tasklist-container');
+const sidebar = document.getElementById('sidebar') as HTMLDivElement | null
+const ul = document.getElementById('tasklist') as HTMLUListElement | null
+const button = document.getElementById('sorting') as HTMLButtonElement | null
+const toggleBtn = document.getElementById('toggle-btn') as HTMLButtonElement | null
+const searchInput = document.getElementById('search-bar') as HTMLInputElement | null
+const welcomeContainer = document.getElementById('welcome-container') as HTMLDivElement | null
+const taskIframe = document.getElementById('taskiframe') as HTMLIFrameElement | HTMLImageElement | null
+const tasklistContainer = document.getElementById('tasklist-container') as HTMLElement
+
+// check if not missing element
+if(!ul || !button || !toggleBtn || !searchInput || !welcomeContainer || !taskIframe || !tasklistContainer){
+    throw new Error('Missing Element in DOM')
+}
 
 // dom loaded
 document.addEventListener('DOMContentLoaded', () => {
+    if(!sidebar) return
     toggleBtn.addEventListener('click', () => {
         sidebar.classList.toggle('collapsed');
-        toggleBtn.setAttribute('aria-expanded', !sidebar.classList.contains('collapsed'));
+        // if class is preset then true while false
+        toggleBtn.setAttribute('aria-expanded', String(!sidebar.classList.contains('collapsed')));
     });
     tasklistContainer.addEventListener('scroll', handleScroll);
     loadTaskFromQuery();
     sortingSidebarLinks();
     SearchTasks();
+    
 });
 
 // handle scroll 
-function handleScroll() {
+function handleScroll(this : HTMLElement) {
     const { scrollTop, scrollHeight, clientHeight } = tasklistContainer
     if (scrollTop + clientHeight >= scrollHeight - 50) {
         loadMoretasks();
@@ -41,7 +62,7 @@ function handleScroll() {
 }
 
 // create loader
-function createLoader() {
+function createLoader() : HTMLDivElement{
     const loader = document.createElement('div');
     loader.className = 'loader-container';
     loader.innerHTML = `
@@ -56,14 +77,14 @@ function createLoader() {
 }
 
 // loads more tasks
-async function loadMoretasks() {
-    if (isloading || !ismoreTasks) return;
+async function loadMoretasks() : Promise<void>{
+    if (isloading || !ismoreTasks || !ul) return;
     isloading = true;
 
     const loader = createLoader();
     ul.appendChild(loader);
 
-    const loadingTime = new Promise(resolve => setTimeout(resolve, 900));
+    const loadingTime = new Promise<void>(resolve => setTimeout(resolve, 900));
 
     try {
         let tasksToAdd = [];
@@ -85,7 +106,7 @@ async function loadMoretasks() {
         console.error('not more loading tasks :', error);
     } finally {
         isloading = false;
-        if (!ismoreTasks && currentpage > 1) {
+        if (!ismoreTasks && currentpage > 1 && tasklistContainer) {
             const message = document.createElement('li');
             message.className = 'end-tasks';
             message.style.listStyle = "none"
@@ -94,16 +115,19 @@ async function loadMoretasks() {
                     <span style="color: #F46275; font-size: 19px; padding:4px; font-weight: 400;">No more tasks to load</span>
                 </div>
             `;
-            tasklistContainer.appendChild(message);
+            ul.appendChild(message);
         }
     }
 }
 
 // fetches data from json server
-async function fetchAllData(page = 1, limit = tasksperPage) {
+async function fetchAllData(page  : number = 1, limit : number = tasksperPage) :Promise<Task[]> {
     try {
-        const response = await fetch(`http://localhost:3000/initialTasks?_page=${page}&_limit=${limit}`);
-        return await response.json();
+        const response = await fetch(`${api_main_url}/initialTasks?_page=${page}&_limit=${limit}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json() as Task[];
     } catch (error) {
         console.error("Error fetching all data:", error);
         return [];
@@ -111,7 +135,8 @@ async function fetchAllData(page = 1, limit = tasksperPage) {
 }
 
 // show tasklist
-async function showTaskLists() {
+async function showTaskLists() : Promise<void>{
+    if(!ul || !taskIframe || !welcomeContainer) return
     const tasks = await fetchAllData(currentpage, tasksperPage);
     allTasks = tasks;
     renderTaskList(tasks);
@@ -127,20 +152,20 @@ async function showTaskLists() {
 }
 
 // set tasks and messages show
-function renderTaskList(tasks) {
+function renderTaskList(tasks : Task[]) : void {
+    if(!ul) return
     // when server off the show tasks not loaded from json server
     if (tasks.length === 0 && currentpage === 1) {
         ul.innerHTML = `
             <li style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; cursor: default">
-                <img src="img/not-tasks-found.png" alt="No tasks found" style="width: 40px; height: 40px; margin-bottom: 10px">
+                <img src="/not-tasks-found.png" alt="No tasks found" style="width: 40px; height: 40px; margin-bottom: 10px">
                 <span style="color: #F46275; font-size: 18px; font-weight: 500; letter-spacing: 1px">No tasks found</span>
             </li>
         `;
         return;
     }
-
     tasks.forEach(task => {
-        const listItem = document.createElement('li');
+        const listItem = document.createElement('li') as TaskListItem;
         listItem.textContent = task.name;
         listItem.file = task.file;
 
@@ -150,6 +175,7 @@ function renderTaskList(tasks) {
         }
 
         listItem.addEventListener('click', () => {
+            if(!taskIframe || !welcomeContainer) return
             currentActiveTaskFile = task.file;
             taskIframe.src = task.file;
             taskIframe.classList.add('active');
@@ -163,14 +189,15 @@ function renderTaskList(tasks) {
 }
 
 // active task file
-function setActiveTask(selectedItem) {
-    const allItems = document.querySelectorAll('#tasklist li');
+function setActiveTask(selectedItem : HTMLLIElement) : void {
+    const allItems = document.querySelectorAll<HTMLLIElement>('#tasklist li');
     allItems.forEach(item => item.classList.remove('active'));
     selectedItem.classList.add('active');
 }
 
 // tasks sorting
-function sortingSidebarLinks() {
+function sortingSidebarLinks() : void {
+    if(!button || !ul) return
     button.addEventListener('click', () => {
         isAscending = !isAscending;
 
@@ -178,6 +205,7 @@ function sortingSidebarLinks() {
             currentSearchFilteredTasks.sort((a, b) =>
                 isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
             );
+            // just thses tasks show then sorted for serach
             ul.innerHTML = ""
             renderTaskList(currentSearchFilteredTasks);
         } else {
@@ -202,7 +230,8 @@ function sortingSidebarLinks() {
 }
 
 // search tasks
-function SearchTasks() {
+function SearchTasks() : void{
+    if(!searchInput || !ul) return
     searchInput.addEventListener('input', () => {
         const inputSearchValue = searchInput.value.trim().toLowerCase();
 
@@ -233,8 +262,8 @@ function SearchTasks() {
 }
 
 // update URL
-function updateURL() {
-    const url = new URL(window.location);
+function updateURL() :void {
+    const url = new URL(window.location.href);
     if (currentActiveTaskFile) {
         url.searchParams.set('task', currentActiveTaskFile);
     } else {
@@ -244,7 +273,8 @@ function updateURL() {
 }
 
 // loads task from URL query parameter
-function loadTaskFromQuery() {
+function loadTaskFromQuery() : void{
+    if(!taskIframe || !welcomeContainer) return
     const urlParams = new URLSearchParams(window.location.search);
     const taskFile = urlParams.get('task');
     if (taskFile) {
@@ -256,7 +286,7 @@ function loadTaskFromQuery() {
     showTaskLists();
 
     if (taskFile) {
-        const listItems = document.querySelectorAll('#tasklist li');
+        const listItems = document.querySelectorAll<TaskListItem>('#tasklist li');
         listItems.forEach(li => {
             if (li.file === taskFile) {
                 setActiveTask(li);
@@ -264,3 +294,4 @@ function loadTaskFromQuery() {
         });
     }
 }
+
