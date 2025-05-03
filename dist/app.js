@@ -1,51 +1,104 @@
 "use strict";
-// global state variables
-let currentSearchFilteredTasks = [];
-let isAscending = true;
-let currentActiveTaskFile = null;
-// scroll pagination variables
-let currentpage = 1;
-const tasksperPage = 10;
-let isloading = false;
-let ismoreTasks = true;
-let allTasks = [];
-//json api url
-const api_main_url = '/api';
-// DOM vairables
-const sidebar = document.getElementById('sidebar');
-const ul = document.getElementById('tasklist');
-const button = document.getElementById('sorting');
-const toggleBtn = document.getElementById('toggle-btn');
-const searchInput = document.getElementById('search-bar');
-const welcomeContainer = document.getElementById('welcome-container');
-const taskIframe = document.getElementById('taskiframe');
-const tasklistContainer = document.getElementById('tasklist-container');
-// check if not missing element
-if (!ul || !button || !toggleBtn || !searchInput || !welcomeContainer || !taskIframe || !tasklistContainer) {
-    throw new Error('Missing Element in DOM');
-}
-// dom loaded
-document.addEventListener('DOMContentLoaded', () => {
-    if (!sidebar)
+// api url
+const TASKS_PER_PAGE = 10;
+const API_MAIN_URL = '/api';
+// state management
+let state = {
+    currentPage: 1,
+    isLoading: false,
+    hasMoreTasks: true,
+    allTasks: [],
+    filteredTasks: [],
+    isAscending: true,
+    activeTaskFile: null
+};
+// DOM Elements
+const elements = {
+    taskList: document.getElementById('tasklist'),
+    welcomeContainer: document.getElementById('welcome-container'),
+    taskIframe: document.getElementById('taskiframe'),
+    sidebar: document.getElementById('sidebar'),
+    toggleBtn: document.getElementById('toggle-btn'),
+    taskListContainer: document.getElementById('tasklist-container'),
+    searchInput: document.getElementById('search-bar'),
+    sortButton: document.getElementById('sorting')
+};
+// Initialize the app
+function init() {
+    if (!validateElements())
         return;
-    toggleBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-        // if class is preset then true while false
-        toggleBtn.setAttribute('aria-expanded', String(!sidebar.classList.contains('collapsed')));
-    });
-    tasklistContainer.addEventListener('scroll', handleScroll);
+    elements.toggleBtn.addEventListener('click', toggleSidebar);
+    elements.taskListContainer.addEventListener('scroll', handleScroll);
+    elements.sortButton.addEventListener('click', sortTasks);
+    elements.searchInput.addEventListener('input', searchTasks);
     loadTaskFromQuery();
-    sortingSidebarLinks();
-    SearchTasks();
-});
-// handle scroll 
-function handleScroll() {
-    const { scrollTop, scrollHeight, clientHeight } = tasklistContainer;
-    if (scrollTop + clientHeight >= scrollHeight - 50) {
-        loadMoretasks();
+    loadInitialTasks();
+}
+// check if all object values are exist or missing.
+function validateElements() {
+    return Object.values(elements).every(element => element !== null);
+}
+// Sidebar toggle
+function toggleSidebar() {
+    elements.sidebar.classList.toggle('collapsed');
+}
+// Fetch tasks from Json API
+async function fetchTasks(page = 1, limit = TASKS_PER_PAGE) {
+    try {
+        const response = await fetch(`${API_MAIN_URL}/initialTasks?_page=${page}&_limit=${limit}`);
+        if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
+        return await response.json();
+    }
+    catch (error) {
+        console.error("Error fetching tasks:", error);
+        return [];
     }
 }
-// create loader
+// Load initial tasks
+async function loadInitialTasks() {
+    state.allTasks = await fetchTasks(state.currentPage, TASKS_PER_PAGE);
+    renderTasks(state.allTasks);
+    updateUI();
+}
+// Load more tasks on scroll
+async function loadMoreTasks() {
+    if (state.isLoading || !state.hasMoreTasks)
+        return;
+    state.isLoading = true;
+    const loader = createLoader();
+    elements.taskList.appendChild(loader);
+    try {
+        const newTasks = await fetchTasks(state.currentPage + 1, TASKS_PER_PAGE);
+        state.hasMoreTasks = newTasks.length === TASKS_PER_PAGE;
+        await new Promise(resolve => setTimeout(resolve, 900));
+        loader.remove();
+        if (newTasks.length > 0) {
+            state.currentPage++;
+            state.allTasks = [...state.allTasks, ...newTasks];
+            renderTasks(newTasks);
+        }
+        if (!state.hasMoreTasks)
+            showNoMoreTasksMessage();
+    }
+    catch (error) {
+        console.error('Error loading more tasks:', error);
+    }
+    finally {
+        state.isLoading = false;
+    }
+}
+function showNoMoreTasksMessage() {
+    const message = document.createElement('li');
+    message.className = 'end-tasks';
+    message.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; cursor: default">
+            <span style="color: #F46275; font-size: 19px; padding:4px; font-weight: 400;">No more tasks to load</span>
+        </div>
+    `;
+    elements.taskList.appendChild(message);
+}
+// Create loader element
 function createLoader() {
     const loader = document.createElement('div');
     loader.className = 'loader-container';
@@ -59,84 +112,10 @@ function createLoader() {
     `;
     return loader;
 }
-// loads more tasks
-async function loadMoretasks() {
-    if (isloading || !ismoreTasks || !ul)
-        return;
-    isloading = true;
-    const loader = createLoader();
-    ul.appendChild(loader);
-    const loadingTime = new Promise(resolve => setTimeout(resolve, 900));
-    try {
-        let tasksToAdd = [];
-        tasksToAdd = await fetchAllData(currentpage + 1, tasksperPage);
-        ismoreTasks = tasksToAdd.length === tasksperPage;
-        await loadingTime;
-        if (tasksToAdd.length > 0) {
-            currentpage++;
-            loader.remove();
-            renderTaskList(tasksToAdd);
-            if (!currentSearchFilteredTasks.length) {
-                allTasks = [...allTasks, ...tasksToAdd];
-            }
-        }
-    }
-    catch (error) {
-        console.error('not more loading tasks :', error);
-    }
-    finally {
-        isloading = false;
-        if (!ismoreTasks && currentpage > 1 && tasklistContainer) {
-            const message = document.createElement('li');
-            message.className = 'end-tasks';
-            message.style.listStyle = "none";
-            message.innerHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; cursor: default">
-                    <span style="color: #F46275; font-size: 19px; padding:4px; font-weight: 400;">No more tasks to load</span>
-                </div>
-            `;
-            ul.appendChild(message);
-        }
-    }
-}
-// fetches data from json server
-async function fetchAllData(page = 1, limit = tasksperPage) {
-    try {
-        const response = await fetch(`${api_main_url}/initialTasks?_page=${page}&_limit=${limit}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
-    }
-    catch (error) {
-        console.error("Error fetching all data:", error);
-        return [];
-    }
-}
-// show tasklist
-async function showTaskLists() {
-    if (!ul || !taskIframe || !welcomeContainer)
-        return;
-    const tasks = await fetchAllData(currentpage, tasksperPage);
-    allTasks = tasks;
-    renderTaskList(tasks);
-    if (currentActiveTaskFile) {
-        taskIframe.src = currentActiveTaskFile;
-        taskIframe.classList.add('active');
-        welcomeContainer.classList.remove('active');
-    }
-    else {
-        taskIframe.classList.remove('active');
-        welcomeContainer.classList.add('active');
-    }
-}
-// set tasks and messages show
-function renderTaskList(tasks) {
-    if (!ul)
-        return;
-    // when server off the show tasks not loaded from json server
-    if (tasks.length === 0 && currentpage === 1) {
-        ul.innerHTML = `
+// Render tasks to the DOM
+function renderTasks(tasks) {
+    if (tasks.length === 0) {
+        elements.taskList.innerHTML = `
             <li style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; cursor: default">
                 <img src="/not-tasks-found.png" alt="No tasks found" style="width: 40px; height: 40px; margin-bottom: 10px">
                 <span style="color: #F46275; font-size: 18px; font-weight: 500; letter-spacing: 1px">No tasks found</span>
@@ -144,122 +123,100 @@ function renderTaskList(tasks) {
         `;
         return;
     }
+    const fragment = document.createDocumentFragment();
     tasks.forEach(task => {
         const listItem = document.createElement('li');
         listItem.textContent = task.name;
         listItem.file = task.file;
-        // when sorted the page then active file show in page 
-        if (task.file === currentActiveTaskFile) {
+        if (task.file === state.activeTaskFile)
             listItem.classList.add('active');
-        }
-        listItem.addEventListener('click', () => {
-            if (!taskIframe || !welcomeContainer)
-                return;
-            currentActiveTaskFile = task.file;
-            taskIframe.src = task.file;
-            taskIframe.classList.add('active');
-            welcomeContainer.classList.remove('active');
-            updateURL();
-            setActiveTask(listItem);
-        });
-        ul.appendChild(listItem);
+        listItem.addEventListener('click', () => selectTask(task.file, listItem));
+        fragment.appendChild(listItem);
     });
+    elements.taskList.appendChild(fragment);
 }
-// active task file
+// Handle task selection
+function selectTask(file, listItem) {
+    state.activeTaskFile = file;
+    elements.taskIframe.src = file;
+    elements.taskIframe.classList.add('active');
+    elements.welcomeContainer.classList.remove('active');
+    setActiveTask(listItem);
+    updateURL();
+}
+// Set active task styling
 function setActiveTask(selectedItem) {
-    const allItems = document.querySelectorAll('#tasklist li');
-    allItems.forEach(item => item.classList.remove('active'));
+    document.querySelectorAll('#tasklist li').forEach(item => {
+        item.classList.remove('active');
+    });
     selectedItem.classList.add('active');
 }
-// tasks sorting
-function sortingSidebarLinks() {
-    if (!button || !ul)
-        return;
-    button.addEventListener('click', () => {
-        isAscending = !isAscending;
-        if (currentSearchFilteredTasks.length > 0) {
-            currentSearchFilteredTasks.sort((a, b) => isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
-            // just thses tasks show then sorted for serach
-            ul.innerHTML = "";
-            renderTaskList(currentSearchFilteredTasks);
-        }
-        else {
-            allTasks.sort((a, b) => isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
-            // all tasks scroll then sorted the ul reset and not again tasks add
-            ul.innerHTML = "";
-            renderTaskList(allTasks);
-        }
-        if (isAscending) {
-            button.classList.remove('sort-desc');
-            button.classList.add('sort-asc');
-            button.textContent = "Ascending";
-        }
-        else {
-            button.classList.remove('sort-asc');
-            button.classList.add('sort-desc');
-            button.textContent = "Descending";
-        }
-        updateURL();
-    });
+// Sort tasks
+function sortTasks() {
+    state.isAscending = !state.isAscending;
+    const tasksToSort = state.filteredTasks.length > 0 ? state.filteredTasks : state.allTasks;
+    tasksToSort.sort((a, b) => state.isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+    elements.taskList.innerHTML = '';
+    renderTasks(tasksToSort);
+    elements.sortButton.classList.toggle('sort-asc', state.isAscending);
+    elements.sortButton.classList.toggle('sort-desc', !state.isAscending);
+    elements.sortButton.textContent = state.isAscending ? "Ascending" : "Descending";
+    updateURL();
 }
-// search tasks
-function SearchTasks() {
-    if (!searchInput || !ul)
-        return;
-    searchInput.addEventListener('input', () => {
-        const inputSearchValue = searchInput.value.trim().toLowerCase();
-        // when search close then render page 1 
-        currentpage = 1;
-        isAscending = false;
-        ul.innerHTML = "";
-        // when serach tasks not show then reload all tasks page 1 show
-        if (inputSearchValue === "") {
-            currentSearchFilteredTasks = [];
-            showTaskLists();
-            return;
-        }
-        // tasks search words by words in regExp
-        currentSearchFilteredTasks = allTasks.filter(task => {
-            const name = task.name.toLowerCase();
-            const file = task.file.toLowerCase();
-            const wordRegex = new RegExp(`\\b${inputSearchValue}\\b`, 'i');
-            return wordRegex.test(name) || wordRegex.test(file);
-        });
-        renderTaskList(currentSearchFilteredTasks);
-        updateURL();
+// Search tasks
+function searchTasks() {
+    const searchTerm = elements.searchInput.value.trim().toLowerCase();
+    state.isAscending = false;
+    state.filteredTasks = state.allTasks.filter(task => {
+        const name = task.name.toLowerCase();
+        const file = task.file.toLowerCase();
+        const wordRegex = new RegExp(`\\b${searchTerm}\\b`, 'i');
+        return wordRegex.test(name) || wordRegex.test(file);
     });
+    elements.taskList.innerHTML = '';
+    renderTasks(state.filteredTasks);
+    updateURL();
 }
-// update URL
+// Update URL with current state
 function updateURL() {
     const url = new URL(window.location.href);
-    if (currentActiveTaskFile) {
-        url.searchParams.set('task', currentActiveTaskFile);
+    if (state.activeTaskFile) {
+        url.searchParams.set('task', state.activeTaskFile);
     }
     else {
         url.searchParams.delete('task');
     }
-    history.pushState({ task: currentActiveTaskFile }, '', url);
+    history.pushState({ task: state.activeTaskFile }, '', url);
 }
-// loads task from URL query parameter
+// Load task from URL query
 function loadTaskFromQuery() {
-    if (!taskIframe || !welcomeContainer)
-        return;
     const urlParams = new URLSearchParams(window.location.search);
     const taskFile = urlParams.get('task');
     if (taskFile) {
-        currentActiveTaskFile = taskFile;
-        taskIframe.src = taskFile;
-        taskIframe.classList.add('active');
-        welcomeContainer.classList.remove('active');
-    }
-    showTaskLists();
-    if (taskFile) {
-        const listItems = document.querySelectorAll('#tasklist li');
-        listItems.forEach(li => {
-            if (li.file === taskFile) {
-                setActiveTask(li);
-            }
-        });
+        state.activeTaskFile = taskFile;
+        elements.taskIframe.src = taskFile;
+        elements.taskIframe.classList.add('active');
+        elements.welcomeContainer.classList.remove('active');
     }
 }
+// Handle scroll for infinite loading
+function handleScroll() {
+    const { scrollTop, scrollHeight, clientHeight } = elements.taskListContainer;
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+        loadMoreTasks();
+    }
+}
+// Update UI based on state
+function updateUI() {
+    if (state.activeTaskFile) {
+        elements.taskIframe.classList.add('active');
+        elements.welcomeContainer.classList.remove('active');
+    }
+    else {
+        elements.taskIframe.classList.remove('active');
+        elements.welcomeContainer.classList.add('active');
+    }
+}
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', init);
 //# sourceMappingURL=app.js.map

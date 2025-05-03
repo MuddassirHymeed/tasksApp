@@ -1,68 +1,128 @@
-// task structure
 interface Task {
-    name : string,
-    file : string,
+    name: string;
+    file: string;
 }
-
 interface TaskListItem extends HTMLLIElement {
-    file : string,
+    file: string;
 }
 
-// global state variables
-let currentSearchFilteredTasks : Task[] = [];
-let isAscending : boolean = true;
-let currentActiveTaskFile : string | null  = null;
-
-// scroll pagination variables
-let currentpage : number = 1;
-const tasksperPage : number = 10;
-let isloading : boolean = false;
-let ismoreTasks : boolean = true;
-let allTasks : Task[] = [];
-
-//json api url
-const api_main_url = '/api';
-
-// DOM vairables
-const sidebar = document.getElementById('sidebar') as HTMLDivElement | null
-const ul = document.getElementById('tasklist') as HTMLUListElement | null
-const button = document.getElementById('sorting') as HTMLButtonElement | null
-const toggleBtn = document.getElementById('toggle-btn') as HTMLButtonElement | null
-const searchInput = document.getElementById('search-bar') as HTMLInputElement | null
-const welcomeContainer = document.getElementById('welcome-container') as HTMLDivElement | null
-const taskIframe = document.getElementById('taskiframe') as HTMLIFrameElement | HTMLImageElement | null
-const tasklistContainer = document.getElementById('tasklist-container') as HTMLElement
-
-// check if not missing element
-if(!ul || !button || !toggleBtn || !searchInput || !welcomeContainer || !taskIframe || !tasklistContainer){
-    throw new Error('Missing Element in DOM')
+// AppState
+interface AppState {
+    currentPage: number,
+    isLoading: boolean,
+    hasMoreTasks: boolean,
+    allTasks: Task[],
+    filteredTasks: Task[],
+    isAscending: boolean,
+    activeTaskFile: string | null
 }
 
-// dom loaded
-document.addEventListener('DOMContentLoaded', () => {
-    if(!sidebar) return
-    toggleBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-        // if class is preset then true while false
-        toggleBtn.setAttribute('aria-expanded', String(!sidebar.classList.contains('collapsed')));
-    });
-    tasklistContainer.addEventListener('scroll', handleScroll);
+// api url
+const TASKS_PER_PAGE : number = 10;
+const API_MAIN_URL : string = '/api';
+
+// state management
+let state : AppState = {
+    currentPage: 1,
+    isLoading: false,
+    hasMoreTasks: true,
+    allTasks: [] as Task[],
+    filteredTasks: [] as Task[],
+    isAscending: true,
+    activeTaskFile: null as string | null
+};
+
+// DOM Elements
+const elements = {
+    taskList: document.getElementById('tasklist') as HTMLUListElement,
+    welcomeContainer: document.getElementById('welcome-container') as HTMLDivElement,
+    taskIframe: document.getElementById('taskiframe') as HTMLIFrameElement,
+    sidebar: document.getElementById('sidebar') as HTMLDivElement,
+    toggleBtn: document.getElementById('toggle-btn') as HTMLButtonElement,
+    taskListContainer: document.getElementById('tasklist-container') as HTMLElement,
+    searchInput: document.getElementById('search-bar') as HTMLInputElement,
+    sortButton: document.getElementById('sorting') as HTMLButtonElement
+};
+
+// Initialize the app
+function init() {
+    if (!validateElements()) return;
+    elements.toggleBtn.addEventListener('click', toggleSidebar);
+    elements.taskListContainer.addEventListener('scroll', handleScroll);
+    elements.sortButton.addEventListener('click', sortTasks);
+    elements.searchInput.addEventListener('input', searchTasks);
     loadTaskFromQuery();
-    sortingSidebarLinks();
-    SearchTasks();
-    
-});
+    loadInitialTasks();
+}
 
-// handle scroll 
-function handleScroll(this : HTMLElement) {
-    const { scrollTop, scrollHeight, clientHeight } = tasklistContainer
-    if (scrollTop + clientHeight >= scrollHeight - 50) {
-        loadMoretasks();
+// check if all object values are exist or missing.
+function validateElements(): boolean {
+    return Object.values(elements).every(element => element !== null);
+}
+
+// Sidebar toggle
+function toggleSidebar() {
+    elements.sidebar.classList.toggle('collapsed');
+}
+
+// Fetch tasks from Json API
+async function fetchTasks(page: number = 1, limit: number = TASKS_PER_PAGE): Promise<Task[]> {
+    try {
+        const response = await fetch(`${API_MAIN_URL}/initialTasks?_page=${page}&_limit=${limit}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching tasks:", error);
+        return [];
     }
 }
 
-// create loader
-function createLoader() : HTMLDivElement{
+// Load initial tasks
+async function loadInitialTasks() {
+    state.allTasks = await fetchTasks(state.currentPage, TASKS_PER_PAGE);
+    renderTasks(state.allTasks);
+    updateUI();
+}
+
+// Load more tasks on scroll
+async function loadMoreTasks() {
+    if (state.isLoading || !state.hasMoreTasks) return;
+
+    state.isLoading = true;
+    const loader = createLoader();
+    elements.taskList.appendChild(loader);
+
+    try {
+        const newTasks = await fetchTasks(state.currentPage + 1, TASKS_PER_PAGE);
+        state.hasMoreTasks = newTasks.length === TASKS_PER_PAGE;
+        await new Promise(resolve => setTimeout(resolve, 900));
+        loader.remove();
+        if (newTasks.length > 0) {
+            state.currentPage++;
+            state.allTasks = [...state.allTasks, ...newTasks];
+            renderTasks(newTasks);
+        }
+        if (!state.hasMoreTasks) showNoMoreTasksMessage();
+    } catch (error) {
+        console.error('Error loading more tasks:', error);
+    } finally {
+        state.isLoading = false;
+    }
+}
+
+function showNoMoreTasksMessage() {
+    const message = document.createElement('li');
+    message.className = 'end-tasks';
+    message.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; cursor: default">
+            <span style="color: #F46275; font-size: 19px; padding:4px; font-weight: 400;">No more tasks to load</span>
+        </div>
+    `;
+    elements.taskList.appendChild(message);
+}
+
+// Create loader element
+function createLoader(): HTMLDivElement {
     const loader = document.createElement('div');
     loader.className = 'loader-container';
     loader.innerHTML = `
@@ -76,87 +136,10 @@ function createLoader() : HTMLDivElement{
     return loader;
 }
 
-// loads more tasks
-async function loadMoretasks() : Promise<void>{
-    if (isloading || !ismoreTasks || !ul) return;
-    isloading = true;
-
-    const loader = createLoader();
-    ul.appendChild(loader);
-
-    const loadingTime = new Promise<void>(resolve => setTimeout(resolve, 900));
-
-    try {
-        let tasksToAdd = [];
-        tasksToAdd = await fetchAllData(currentpage + 1, tasksperPage);
-        ismoreTasks = tasksToAdd.length === tasksperPage;
-
-        await loadingTime;
-
-        if (tasksToAdd.length > 0) {
-            currentpage++;
-            loader.remove();
-            renderTaskList(tasksToAdd);
-
-            if (!currentSearchFilteredTasks.length) {
-                allTasks = [...allTasks, ...tasksToAdd];
-            }
-        }
-    } catch (error) {
-        console.error('not more loading tasks :', error);
-    } finally {
-        isloading = false;
-        if (!ismoreTasks && currentpage > 1 && tasklistContainer) {
-            const message = document.createElement('li');
-            message.className = 'end-tasks';
-            message.style.listStyle = "none"
-            message.innerHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; cursor: default">
-                    <span style="color: #F46275; font-size: 19px; padding:4px; font-weight: 400;">No more tasks to load</span>
-                </div>
-            `;
-            ul.appendChild(message);
-        }
-    }
-}
-
-// fetches data from json server
-async function fetchAllData(page  : number = 1, limit : number = tasksperPage) :Promise<Task[]> {
-    try {
-        const response = await fetch(`${api_main_url}/initialTasks?_page=${page}&_limit=${limit}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json() as Task[];
-    } catch (error) {
-        console.error("Error fetching all data:", error);
-        return [];
-    }
-}
-
-// show tasklist
-async function showTaskLists() : Promise<void>{
-    if(!ul || !taskIframe || !welcomeContainer) return
-    const tasks = await fetchAllData(currentpage, tasksperPage);
-    allTasks = tasks;
-    renderTaskList(tasks);
-
-    if (currentActiveTaskFile) {
-        taskIframe.src = currentActiveTaskFile;
-        taskIframe.classList.add('active');
-        welcomeContainer.classList.remove('active');
-    } else {
-        taskIframe.classList.remove('active');
-        welcomeContainer.classList.add('active');
-    }
-}
-
-// set tasks and messages show
-function renderTaskList(tasks : Task[]) : void {
-    if(!ul) return
-    // when server off the show tasks not loaded from json server
-    if (tasks.length === 0 && currentpage === 1) {
-        ul.innerHTML = `
+// Render tasks to the DOM
+function renderTasks(tasks: Task[]) {
+    if (tasks.length === 0) {
+        elements.taskList.innerHTML = `
             <li style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; cursor: default">
                 <img src="/not-tasks-found.png" alt="No tasks found" style="width: 40px; height: 40px; margin-bottom: 10px">
                 <span style="color: #F46275; font-size: 18px; font-weight: 500; letter-spacing: 1px">No tasks found</span>
@@ -164,134 +147,115 @@ function renderTaskList(tasks : Task[]) : void {
         `;
         return;
     }
+
+    const fragment = document.createDocumentFragment();
     tasks.forEach(task => {
         const listItem = document.createElement('li') as TaskListItem;
         listItem.textContent = task.name;
         listItem.file = task.file;
-
-        // when sorted the page then active file show in page 
-        if (task.file === currentActiveTaskFile) {
-            listItem.classList.add('active');
-        }
-
-        listItem.addEventListener('click', () => {
-            if(!taskIframe || !welcomeContainer) return
-            currentActiveTaskFile = task.file;
-            taskIframe.src = task.file;
-            taskIframe.classList.add('active');
-            welcomeContainer.classList.remove('active');
-            updateURL();
-            setActiveTask(listItem);
-        });
-
-        ul.appendChild(listItem);
+        if (task.file === state.activeTaskFile) listItem.classList.add('active');
+        listItem.addEventListener('click', () => selectTask(task.file, listItem));
+        fragment.appendChild(listItem);
     });
+    elements.taskList.appendChild(fragment);
 }
 
-// active task file
-function setActiveTask(selectedItem : HTMLLIElement) : void {
-    const allItems = document.querySelectorAll<HTMLLIElement>('#tasklist li');
-    allItems.forEach(item => item.classList.remove('active'));
+// Handle task selection
+function selectTask(file: string, listItem: HTMLLIElement) {
+    state.activeTaskFile = file;
+    elements.taskIframe.src = file;
+    elements.taskIframe.classList.add('active');
+    elements.welcomeContainer.classList.remove('active');
+    setActiveTask(listItem);
+    updateURL();
+}
+
+// Set active task styling
+function setActiveTask(selectedItem: HTMLLIElement) {
+    document.querySelectorAll<HTMLLIElement>('#tasklist li').forEach(item => {
+        item.classList.remove('active');
+    });
     selectedItem.classList.add('active');
 }
 
-// tasks sorting
-function sortingSidebarLinks() : void {
-    if(!button || !ul) return
-    button.addEventListener('click', () => {
-        isAscending = !isAscending;
+// Sort tasks
+function sortTasks() {
+    state.isAscending = !state.isAscending;
+    const tasksToSort = state.filteredTasks.length > 0 ? state.filteredTasks : state.allTasks;
+    
+    tasksToSort.sort((a, b) => 
+        state.isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
+    );
 
-        if (currentSearchFilteredTasks.length > 0) {
-            currentSearchFilteredTasks.sort((a, b) =>
-                isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
-            );
-            // just thses tasks show then sorted for serach
-            ul.innerHTML = ""
-            renderTaskList(currentSearchFilteredTasks);
-        } else {
-            allTasks.sort((a, b) =>
-                isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
-            );
-            // all tasks scroll then sorted the ul reset and not again tasks add
-            ul.innerHTML = ""
-            renderTaskList(allTasks);
-        }
-        if (isAscending) {
-            button.classList.remove('sort-desc');
-            button.classList.add('sort-asc');
-            button.textContent = "Ascending";
-        } else {
-            button.classList.remove('sort-asc');
-            button.classList.add('sort-desc');
-            button.textContent = "Descending";
-        }
-        updateURL();
-    });
+    elements.taskList.innerHTML = '';
+    renderTasks(tasksToSort);
+    
+    elements.sortButton.classList.toggle('sort-asc', state.isAscending);
+    elements.sortButton.classList.toggle('sort-desc', !state.isAscending);
+    elements.sortButton.textContent = state.isAscending ? "Ascending" : "Descending";
+    
+    updateURL();
 }
 
-// search tasks
-function SearchTasks() : void{
-    if(!searchInput || !ul) return
-    searchInput.addEventListener('input', () => {
-        const inputSearchValue = searchInput.value.trim().toLowerCase();
-
-        // when search close then render page 1 
-        currentpage = 1;
-        isAscending = false;
-
-        ul.innerHTML = ""
-
-        // when serach tasks not show then reload all tasks page 1 show
-        if (inputSearchValue === "") {
-            currentSearchFilteredTasks = [];
-            showTaskLists()
-            return;
-        }
-
-        // tasks search words by words in regExp
-        currentSearchFilteredTasks = allTasks.filter(task => {
-            const name = task.name.toLowerCase();
-            const file = task.file.toLowerCase();
-            const wordRegex = new RegExp(`\\b${inputSearchValue}\\b`, 'i');
-            return wordRegex.test(name) || wordRegex.test(file);
-        });
-
-        renderTaskList(currentSearchFilteredTasks);
-        updateURL();
+// Search tasks
+function searchTasks() {
+    const searchTerm = elements.searchInput.value.trim().toLowerCase();
+    state.isAscending = false;
+    
+    state.filteredTasks = state.allTasks.filter(task => {
+        const name = task.name.toLowerCase();
+        const file = task.file.toLowerCase();
+        const wordRegex = new RegExp(`\\b${searchTerm}\\b`, 'i');
+        return wordRegex.test(name) || wordRegex.test(file);
     });
+
+    elements.taskList.innerHTML = '';
+    renderTasks(state.filteredTasks);
+    updateURL();
 }
 
-// update URL
-function updateURL() :void {
+// Update URL with current state
+function updateURL() {
     const url = new URL(window.location.href);
-    if (currentActiveTaskFile) {
-        url.searchParams.set('task', currentActiveTaskFile);
+    if (state.activeTaskFile) {
+        url.searchParams.set('task', state.activeTaskFile);
     } else {
         url.searchParams.delete('task');
     }
-    history.pushState({ task: currentActiveTaskFile }, '', url);
+    history.pushState({ task: state.activeTaskFile }, '', url);
 }
 
-// loads task from URL query parameter
-function loadTaskFromQuery() : void{
-    if(!taskIframe || !welcomeContainer) return
+// Load task from URL query
+function loadTaskFromQuery() {
     const urlParams = new URLSearchParams(window.location.search);
     const taskFile = urlParams.get('task');
+    
     if (taskFile) {
-        currentActiveTaskFile = taskFile;
-        taskIframe.src = taskFile;
-        taskIframe.classList.add('active');
-        welcomeContainer.classList.remove('active');
-    }
-    showTaskLists();
-
-    if (taskFile) {
-        const listItems = document.querySelectorAll<TaskListItem>('#tasklist li');
-        listItems.forEach(li => {
-            if (li.file === taskFile) {
-                setActiveTask(li);
-            }
-        });
+        state.activeTaskFile = taskFile;
+        elements.taskIframe.src = taskFile;
+        elements.taskIframe.classList.add('active');
+        elements.welcomeContainer.classList.remove('active');
     }
 }
 
+// Handle scroll for infinite loading
+function handleScroll() {
+    const { scrollTop, scrollHeight, clientHeight } = elements.taskListContainer;
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+        loadMoreTasks();
+    }
+}
+
+// Update UI based on state
+function updateUI() {
+    if (state.activeTaskFile) {
+        elements.taskIframe.classList.add('active');
+        elements.welcomeContainer.classList.remove('active');
+    } else {
+        elements.taskIframe.classList.remove('active');
+        elements.welcomeContainer.classList.add('active');
+    }
+}
+
+// Initialize the app when DOM is loaded
+document.addEventListener('DOMContentLoaded', init);

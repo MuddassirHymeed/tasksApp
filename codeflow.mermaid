@@ -1,0 +1,126 @@
+DOM Content Loaded
+       │
+       ▼
+     init()
+       │
+       ├───▶ validateElements() ───▶ Check all DOM elements exist
+       │
+       ├───▶ Set up event listeners:
+       │     │
+       │     ├───▶ toggleBtn (toggleSidebar) ───▶ Toggle 'collapsed' class on sidebar
+       │     │
+       │     ├───▶ taskListContainer (handleScroll) ──┐
+       │     │                                        │
+       │     │   (When scrolling near bottom)         │
+       │     └──────▶ loadMoreTasks() ◀───────────────┘
+       │             │
+       │             ├───▶ Check if not loading and has more tasks
+       │             │
+       │             ├───▶ createLoader() ───▶ Add loading spinner
+       │             │
+       │             └───▶ fetchTasks() ───▶ Get next page of tasks
+       │                   │
+       │                   └───▶ If no more tasks: showNoMoreTasksMessage()
+       │
+       ├───▶ loadTaskFromQuery()
+       │     │
+       │     └───▶ Check URL for 'task' param
+       │          │
+       │          └───▶ If found:
+       │               │
+       │               ├───▶ Set state.activeTaskFile
+       │               │
+       │               ├───▶ Set iframe src
+       │               │
+       │               └───▶ updateUI()
+       │
+       └───▶ loadInitialTasks()
+             │
+             └───▶ fetchTasks()
+                  │
+                  ├───▶ API Call (/api/initialTasks)
+                  │
+                  └───▶ renderTasks()
+                       │
+                       ├───▶ If no tasks: Show "No tasks found" message
+                       │
+                       ├───▶ For each task:
+                       │     │
+                       │     ├───▶ Create list item
+                       │     │
+                       │     ├───▶ Add click handler (selectTask)
+                       │     │      │
+                       │     │      └───▶ Set active task file
+                       │     │      │
+                       │     │      ├───▶ Update iframe src
+                       │     │      │
+                       │     │      ├───▶ setActiveTask() ───▶ Update active class
+                       │     │      │
+                       │     │      └───▶ updateURL() ───▶ Push to history
+                       │     │
+                       │     └───▶ Highlight if active task
+                       │
+                       └───▶ updateUI()
+                            │
+                            ├───▶ Show/hide iframe based on active task
+                            │
+                            └───▶ Show/hide welcome container
+
+Other Event Flows:
+───────────────────────────────────────────────────
+
+1. Search Flow:
+elements.searchInput (input) ───▶ searchTasks()
+                                   │
+                                   ├───▶ Filter tasks by search term
+                                   │
+                                   ├───▶ Reset sorting
+                                   │
+                                   └───▶ renderTasks()
+
+2. Sorting Flow:
+elements.sortButton (click) ───▶ sortTasks()
+                                 │
+                                 ├───▶ Toggle sort direction
+                                 │
+                                 ├───▶ Sort current task list
+                                 │
+                                 ├───▶ Update button text/class
+                                 │
+                                 └───▶ renderTasks()
+
+3. Infinite Scroll Flow:
+taskListContainer (scroll) ───▶ handleScroll()
+                               │
+                               └───▶ If near bottom: loadMoreTasks()
+                                     │
+                                     ├───▶ createLoader()
+                                     │
+                                     ├───▶ fetchTasks()
+                                     │
+                                     └───▶ renderTasks()
+
+4. Task Selection Flow:
+taskList li (click) ───▶ selectTask()
+                         │
+                         ├───▶ Set active task
+                         │
+                         ├───▶ Update iframe
+                         │
+                         ├───▶ setActiveTask()
+                         │
+                         └───▶ updateURL()
+                              │
+                              └───▶ Push state to history
+
+5. URL Navigation Flow:
+(popstate event) ───▶ loadTaskFromQuery() [Handles back/forward navigation]
+
+
+
+KEY COMPONENTS
+* => Initialization: Sets up the entire application
+* => Data Flow: Handles fetching and managing tasks
+* => UI Flow: Manages rendering and updates
+* => Event Flow: Handles user interactions
+* => State Flow: Manages application state and URL synchronization
