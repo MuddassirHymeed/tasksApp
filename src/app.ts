@@ -1,7 +1,7 @@
-// Import Firebase
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, orderBy, limit, startAfter, getDocs, DocumentData } from 'firebase/firestore';
 
+// firebase configration
 const firebaseConfig = {
   apiKey: "AIzaSyBboqAV9ZBgIESiioqIDJ5k6xy6p6JoieM",
   authDomain: "tasks-list-app-4b02e.firebaseapp.com",
@@ -27,28 +27,26 @@ interface TaskListItem extends HTMLLIElement {
 
 // AppState
 interface AppState {
-  currentPage: number,
-  isLoading: boolean,
-  hasMoreTasks: boolean,
-  allTasks: Task[],
-  filteredTasks: Task[],
-  isAscending: boolean,
-  activeTaskFile: string | null,
-  lastVisible: DocumentData | null
+  isLoading: boolean;
+  hasMoreTasks: boolean;
+  allTasks: Task[];
+  filteredTasks: Task[];
+  isAscending: boolean;
+  activeTaskFile: string | null;
+  lastVisible: DocumentData | null;
 }
 
-// Constants
+// task per page show
 const TASKS_PER_PAGE: number = 10;
 
 // state management
 let state: AppState = {
-  currentPage: 1,
   isLoading: false,
   hasMoreTasks: true,
   allTasks: [] as Task[],
   filteredTasks: [] as Task[],
   isAscending: true,
-  activeTaskFile: null as string | null,
+  activeTaskFile: null,
   lastVisible: null
 };
 
@@ -86,7 +84,7 @@ function toggleSidebar() {
 }
 
 // Fetch tasks from Firestore
-async function fetchTasks(page: number = 1, lastDoc: DocumentData | null = null): Promise<Task[]> {
+async function fetchTasks(lastDoc: DocumentData | null = null): Promise<Task[]> {
   try {
     const tasksRef = collection(db, 'tasks');
     let q;
@@ -116,7 +114,6 @@ async function fetchTasks(page: number = 1, lastDoc: DocumentData | null = null)
       } as Task);
     });
 
-    // Update last visible document for pagination
     if (snapshot.docs.length > 0) {
       state.lastVisible = snapshot.docs[snapshot.docs.length - 1];
     }
@@ -148,14 +145,13 @@ async function loadMoreTasks() {
   elements.taskList.appendChild(loader);
 
   try {
-    const newTasks = await fetchTasks(state.currentPage + 1, state.lastVisible);
+    const newTasks = await fetchTasks(state.lastVisible);
     state.hasMoreTasks = newTasks.length === TASKS_PER_PAGE;
     
     await new Promise(resolve => setTimeout(resolve, 900));
     loader.remove();
     
     if (newTasks.length > 0) {
-      state.currentPage++;
       state.allTasks = [...state.allTasks, ...newTasks];
       renderTasks(newTasks);
     }
@@ -168,6 +164,7 @@ async function loadMoreTasks() {
   }
 }
 
+// Display noMoreTasks Message
 function showNoMoreTasksMessage() {
   const message = document.createElement('li');
   message.className = 'end-tasks';
