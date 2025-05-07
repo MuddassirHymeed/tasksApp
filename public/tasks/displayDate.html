@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Date and Time in javascript</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #d2c7c7;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50% , -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .date-time {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .date-time > h1 {
+            width: 100%;
+            background-color: teal;
+            font-size: 2vw;
+            padding: 5px;
+            color: #000;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .main .wrapper .date-time .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .main .wrapper .date-time .content .headline {
+            font-size: 1.2vw;
+            padding: 5px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .main .wrapper .date-time .content .info{
+            padding:5px;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .main .wrapper .date-time .content .info > #show-day{
+            font-weight: 560;
+            color: #000;
+        }
+
+        .main .wrapper .date-time .content .info > #show-time{
+            font-weight: 550;
+            color: #000;
+        }
+
+        @media (max-width:885px) {
+            .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50% , -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .date-time {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .date-time > h1 {
+            font-size: 4.8vw;
+        }
+
+        .main .wrapper .date-time .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .main .wrapper .date-time .content .headline {
+            font-size: 3.7vw;
+        }
+        .main .wrapper .date-time .content .info{
+            font-size: 3.2vw;
+        }
+        }
+    </style>
+</head>
+<body>
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="date-time">
+                <h1>Display Date</h1>
+                <div class="content">
+                    <p class="headline">Write a javascript program to display the current date and time in following format.</p>
+                    <p class="day info">Today is : <span id="show-day"></span></p>
+                    <p class="time info">Current Time is : <span id="show-time"></span> : <span id="show-minutes"></span> : <span id="show-seconds"></span></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        const date = new Date();
+
+        const day = document.querySelector('#show-day')
+        const time = document.querySelector('#show-time')
+        const minutes = document.querySelector('#show-minutes')
+        const seconds = document.querySelector('#show-seconds')
+
+        function getToday(weekend){
+            const today = weekend[date.getDay()]
+            day.textContent = today
+        }
+        getToday(["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"])
+
+        function getTime(){
+            let timeline = date.toLocaleTimeString('en-PK' , {hour :"numeric" , hour12 : true}) 
+            timeline = timeline.replace('am' , 'AM').replace('pm' , 'PM')
+            time.textContent = timeline
+        }
+        getTime()
+        
+        function getmintuesAndMillisecond(){
+            const Tomintues = date.getMinutes()
+            minutes.textContent =  Tomintues
+            const Toseconds = date.getSeconds()
+            seconds.textContent = Toseconds
+        }
+        getmintuesAndMillisecond()
+        
+    </script>
+</body>
+</html>

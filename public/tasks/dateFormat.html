@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Format</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #d2c7c7;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .date-format {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .date-format>h1 {
+            width: 100%;
+            background-color: teal;
+            font-size: 2vw;
+            padding: 5px;
+            color: #000;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .main .wrapper .date-format .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .main .wrapper .date-format .content .headline {
+            font-size: 1.2vw;
+            padding: 5px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .main .wrapper .date-format .content .show-formates {
+            width: 100%;
+            padding: 5px;
+            font-size: 1vw;
+            color: #000;
+        }
+
+        .main .wrapper .date-format .content .show-formates>span {
+            margin: 1vw;
+        }
+
+        @media (max-width:885px) {
+            .main {
+                width: 100%;
+                height: 100%;
+                position: static;
+            }
+
+            .main .wrapper {
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .main .wrapper .date-format {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 5px;
+                background-color: #f3ebeb;
+                padding: 15px;
+                max-width: 600px;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            .main .wrapper .date-format>h1 {
+                font-size: 4.8vw;
+            }
+
+            .main .wrapper .date-format .content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .main .wrapper .date-format .content .headline {
+                font-size: 3.7vw;
+            }
+
+            .main .wrapper .difference .content .show-formates {
+                font-size: 3.5vw;
+                font-weight: 600;
+                color: #000;
+            }
+
+            .main .wrapper .date-format .content .show-formates > span {
+            font-size: 2.5vw;
+        }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="date-format">
+                <h1>Date Format</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to get the current date.
+                        Expected Output :
+                    </p>
+                    <p class="headline">
+                        mm-dd-yyyy, mm/dd/yyyy or dd-mm-yyyy, dd/mm/yyyy
+                    </p>
+                    <p class="show-formates">
+                        <span class="month-day-year1"></span>
+                        <span class="month-day-year2"></span>
+                        <span class="day-month-year1"></span>
+                        <span class="day-month-year2"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const date = new Date();
+
+            // this function for month , day adding 0 ==> like 02 ,04
+            const pad = (num) => (num < 10 ? "0" + num : num);
+
+            const day = pad(date.getDate());
+            const month = pad(date.getMonth() + 1);
+            const year = date.getFullYear();
+
+            document.querySelector(".month-day-year1").textContent = `${month}-${day}-${year}`;
+            document.querySelector(".month-day-year2").textContent = `${month}/${day}/${year}`;
+            document.querySelector(".day-month-year1").textContent = `${day}-${month}-${year}`;
+            document.querySelector(".day-month-year2").textContent = `${day}/${month}/${year}`;
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin and Win Game | random Number between 0 to 10 </title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #d2c7c7;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .matched-number {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .matched-number>h1 {
+            width: 100%;
+            background-color: teal;
+            font-size: 2vw;
+            padding: 5px;
+            color: #000;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .main .wrapper .matched-number .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .main .wrapper .matched-number .content .headline {
+            font-size: 1.2vw;
+            padding: 5px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .main .wrapper .matched-number .content input {
+            padding: 5px;
+            width: 100%;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .main .wrapper .matched-number .content .guess {
+            padding: 0.5vw 1vw;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .main .wrapper .matched-number .content #result {
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+
+
+        @media (max-width:885px) {
+            .main {
+                width: 100%;
+                height: 100%;
+                position: static;
+            }
+
+            .main .wrapper {
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .main .wrapper .matched-number {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 5px;
+                background-color: #f3ebeb;
+                padding: 15px;
+                max-width: 600px;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            .main .wrapper .matched-number>h1 {
+                font-size: 4.8vw;
+            }
+
+            .main .wrapper .matched-number .content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .main .wrapper .matched-number .content .headline {
+                font-size: 3.7vw;
+            }
+
+            .main .wrapper .matched-number .content input {
+                font-size: 3.2vw;
+            }
+
+            .main .wrapper .matched-number .content .guess {
+                padding: 0.5vw 1vw;
+                font-size: 3.5vw;
+                font-weight: 600;
+                color: #000;
+            }
+
+            .main .wrapper .matched-number .content #result {
+
+                font-size: 3.1vw;
+                font-weight: 600;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="matched-number">
+                <h1>Spin & Win</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program where the program takes a random integer between 1 to 10.
+                        The user is then prompted to input a guess number. If the user input matches with the guess
+                        number,
+                        the program will display a message "Good Work" otherwise display "Not Matched".
+                    </p>
+                    <input type="number" id="inputnumber" min="1" max="10" placeholder="Enter a Number between 1 to 10">
+                    <button class="guess">Guess</button>
+                    <p id="result"></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <script>
+
+        let randomNumbers = Math.floor(Math.random() * 10) + 1;
+        const guessnumber = document.querySelector(".guess")
+        const updateResult = document.querySelector('#result')
+
+        guessnumber.addEventListener("click" , function (e) {
+
+            const userInput =  Number(document.getElementById('inputnumber').value)
+
+            if(userInput === randomNumbers){
+                updateResult.textContent = `Number is matched | Win ${randomNumbers}`
+                updateResult.style.color = "green";
+                updateResult.style.fontsize = "17px";
+                updateResult.style.backgroundColor = "#000";
+                updateResult.style.padding = "6px"
+            }else{
+                updateResult.textContent = `Number is Not matched | again Spin ${randomNumbers}`
+                updateResult.style.color = "yellow";
+                updateResult.style.fontsize = "17px";
+                updateResult.style.backgroundColor = "#000";
+                updateResult.style.padding = "6px"
+            }
+
+            if(userInput < 1 || userInput > 10){
+                updateResult.textContent = `Note : enter a number between 1 to 10`
+                updateResult.style.color = "red";
+                updateResult.style.fontsize = "17px";
+                updateResult.style.backgroundColor = "#000";
+                updateResult.style.padding = "6px"
+            }
+
+           randomNumbers = Math.floor(Math.random() * 10) + 1;
+        })
+
+
+    </script>
+</body>
+
+</html>

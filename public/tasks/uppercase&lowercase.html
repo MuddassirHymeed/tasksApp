@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uppercase and Lowercase </title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #d2c7c7;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .ul-case {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .ul-case>h1 {
+            width: 100%;
+            background-color: teal;
+            font-size: 2vw;
+            padding: 5px;
+            color: #000;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .main .wrapper .ul-case .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .main .wrapper .ul-case .content .headline {
+            font-size: 1.2vw;
+            padding: 5px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .main .wrapper .ul-case .content input {
+            padding: 5px;
+            width: 100%;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .main .wrapper .ul-case .content .convert-chr {
+            padding: 0.5vw 1vw;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+
+
+
+
+        @media (max-width:885px) {
+            .main {
+                width: 100%;
+                height: 100%;
+                position: static;
+            }
+
+            .main .wrapper {
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .main .wrapper .ul-case {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 5px;
+                background-color: #f3ebeb;
+                padding: 15px;
+                max-width: 600px;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            .main .wrapper .ul-case>h1 {
+                font-size: 4.8vw;
+            }
+
+            .main .wrapper .ul-case .content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .main .wrapper .ul-case .content .headline {
+                font-size: 3.7vw;
+            }
+
+            .main .wrapper .ul-case .content input {
+                font-size: 3.2vw;
+            }
+
+            .main .wrapper .ul-case .content .convert-chr {
+                padding: 0.5vw 1vw;
+                font-size: 3.5vw;
+                font-weight: 600;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="ul-case">
+                <h1>Upper and Lower case </h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to create new string with first 3 characters are in lower case. If
+                        the string length is less than 3 convert all the characters in upper case.
+                    </p>
+                    <input type="text" id="sentence" placeholder="Enter a Sentence">
+                    <input type="text" id="result" placeholder="Result">
+                    <button class="convert-chr">Convert Characters</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.querySelector('.convert-chr').addEventListener('click', function () {
+            const inputField = document.querySelector('#sentence')
+            const resultField = document.querySelector('#result');
+
+            let text = inputField.value.trim();
+
+            if (!/[a-zA-Z]/.test(text)) {
+                resultField.value = "Invalid Input";
+                return;
+            }
+
+            if (text.length < 3) {
+                resultField.value = text.toUpperCase();
+            } else {
+                resultField.value = text.slice(0, 3).toLowerCase() + text.slice(3);
+            }
+        });
+
+    </script>
+</body>
+
+</html>

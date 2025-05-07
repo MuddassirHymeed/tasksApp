@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaf year Calculator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #d2c7c7;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .leafyear {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .leafyear>h1 {
+            width: 100%;
+            background-color: teal;
+            font-size: 2vw;
+            padding: 5px;
+            color: #000;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .main .wrapper .leafyear .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .main .wrapper .leafyear .content .headline {
+            font-size: 1.2vw;
+            padding: 5px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .main .wrapper .leafyear .content input {
+            padding: 5px;
+            width: 100%;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .main .wrapper .leafyear .content .guess {
+            padding: 0.5vw 1vw;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        @media (max-width:885px) {
+            .main {
+                width: 100%;
+                height: 100%;
+                position: static;
+            }
+
+            .main .wrapper {
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .main .wrapper .leafyear {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 5px;
+                background-color: #f3ebeb;
+                padding: 15px;
+                max-width: 600px;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            .main .wrapper .leafyear>h1 {
+                font-size: 4.8vw;
+            }
+
+            .main .wrapper .leafyear .content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .main .wrapper .leafyear .content .headline {
+                font-size: 3.7vw;
+            }
+
+            .main .wrapper .leafyear .content input {
+                font-size: 3.2vw;
+            }
+
+            .main .wrapper .leafyear .content .guess {
+                padding: 0.5vw 1vw;
+                font-size: 3.5vw;
+                font-weight: 600;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="leafyear">
+                <h1>Leaf year Calculator</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to determine whether a given year is a leap year in the Gregorian
+                        calendar.
+                    </p>
+                    <input type="text" id="enter-year" placeholder="Enter year">
+                    <input type="text" id="message-leaf-year">
+                    <button class="guess">Guess</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.querySelector(".guess").addEventListener("click", function () {
+            let yearInput = document.getElementById("enter-year");
+            let messageField = document.getElementById("message-leaf-year");
+
+            let year = parseInt(yearInput.value);
+
+            if (!year || year < 0) {
+                messageField.value = "Enter a valid year!";
+                messageField.style.color = "red";
+                return;
+            }
+
+            if ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)) {
+                messageField.value = "This is a Leap Year";
+                messageField.style.color = "green";
+            } else {
+                messageField.value = "Not a Leap Year";
+                messageField.style.color = "purple";
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>

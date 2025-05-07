@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Characters</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #d2c7c7;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .add-chr {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .add-chr>h1 {
+            width: 100%;
+            background-color: teal;
+            font-size: 2vw;
+            padding: 5px;
+            color: #000;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .main .wrapper .add-chr .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .main .wrapper .add-chr .content .headline {
+            font-size: 1.2vw;
+            padding: 5px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .main .wrapper .add-chr .content input {
+            padding: 5px;
+            width: 100%;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .main .wrapper .add-chr .content .check-add-chr {
+            padding: 0.5vw 1vw;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+
+
+
+
+        @media (max-width:885px) {
+            .main {
+                width: 100%;
+                height: 100%;
+                position: static;
+            }
+
+            .main .wrapper {
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .main .wrapper .add-chr {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 5px;
+                background-color: #f3ebeb;
+                padding: 15px;
+                max-width: 600px;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            .main .wrapper .add-chr>h1 {
+                font-size: 4.8vw;
+            }
+
+            .main .wrapper .add-chr .content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .main .wrapper .add-chr .content .headline {
+                font-size: 3.7vw;
+            }
+
+            .main .wrapper .add-chr .content input {
+                font-size: 3.2vw;
+            }
+
+            .main .wrapper .add-chr .content .check-add-chr {
+                padding: 0.5vw 1vw;
+                font-size: 3.5vw;
+                font-weight: 600;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="add-chr">
+                <h1>Add Characters</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to create a new string from a given string taking the last 3
+                        characters and added at both the front and back. The string length must be 3 or more.
+                    </p>
+                    <input type="text" id="str" placeholder="Enter a String">
+                    <input type="text" id="check-status" placeholder="Status" disabled>
+                    <button class="check-add-chr ">Add Characters</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+
+        document.querySelector(".check-add-chr").addEventListener("click", function () {
+            let str = document.getElementById("str").value;
+            let status = document.getElementById("check-status");
+
+            if (str.length < 3) {
+                status.value = "String must be at least 3 characters";
+            } else {
+                let addchr = str.slice(-3);
+                status.value = addchr + " " +  str  + " " + addchr ;
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>

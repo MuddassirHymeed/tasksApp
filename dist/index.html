@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="25 Task List App built with HTML, CSS, and JavaScript">
+    <meta name="keywords" content="Task App, JavaScript Project, Web App, Frontend Development, Task Tracker, HTML5, Local Storage">
+    <meta name="author" content="Muddassir Hymeed">
+    <link rel="shortcut icon" href="/tasks-favicon.png">
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <title>25 Tasks List App</title>
+  <script type="module" crossorigin src="/assets/main.js"></script>
+</head>
+<body class="body">
+    
+    <div class="sidebar" id="sidebar" role="navigation">
+        <button id="toggle-btn" class="toggle-btn"><i class="ri-home-gear-fill"></i></button>
+        <input type="search" placeholder="Search tasks" id="search-bar">
+        <div class="heading sorting-links-btn">
+            <h2>Tasks</h2>
+            <button id="sorting" class="sort-links">Sort</button>
+        </div>
+
+        <div id="tasklist-container" style="overflow-y: auto; height: calc(100vh - 200px);">
+            <ul id="tasklist"></ul>
+            
+        </div>
+    </div>
+
+    <div class="content">
+        <iframe id="taskiframe" src=""></iframe>
+        <div class="welcome-container" id="welcome-container">
+            <div class="welcome-content">
+                <h1>Tasks List App</h1>
+                <p>Select a task from the sidebar</p>
+                <div class="features">
+                    <div class="feature">
+                        <i class="ri-checkbox-circle-line"></i>
+                        <h3>Open Tasks</h3>
+                        <p>Keep all your tasks in one place.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="ri-search-line"></i>
+                        <h3>Search Tasks</h3>
+                        <p>Find any task with search.</p>
+                    </div>
+                    <div class="feature">
+                        <i class="ri-sort-desc"></i>
+                        <h3>Tasks Sorting</h3>
+                        <p>Sort your tasks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Result</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #d2c7c7;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .mul-div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .mul-div>h1 {
+            width: 100%;
+            background-color: teal;
+            font-size: 2vw;
+            padding: 5px;
+            color: #000;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .main .wrapper .mul-div .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .main .wrapper .mul-div .content .headline {
+            font-size: 1.2vw;
+            padding: 5px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .main .wrapper .mul-div .content input {
+            padding: 5px;
+            width: 100%;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        @media (max-width:885px) {
+            .main {
+                width: 100%;
+                height: 100%;
+                position: static;
+            }
+
+            .main .wrapper {
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .main .wrapper .mul-div {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 5px;
+                background-color: #f3ebeb;
+                padding: 15px;
+                max-width: 600px;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            .main .wrapper .mul-div>h1 {
+                font-size: 4.8vw;
+            }
+
+            .main .wrapper .mul-div .content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .main .wrapper .mul-div .content .headline {
+                font-size: 3.7vw;
+            }
+
+            .main .wrapper .mul-div .content input {
+                font-size: 3.2vw;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="mul-div">
+                <h1>Check Result</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to calculate multiplication and division of two numbers (input from
+                        user).
+                    </p>
+                    <input type="number" id="num-1" placeholder="Enter First Number / Dividend">
+                    <input type="number" id="num-2" placeholder="Enter Second Number / Divisor">
+                    <label style="color: rgb(255, 0, 255);" for="div">Check for Division</label><input
+                        style="width: 100px; height: 17px;" type="checkbox" id="check-division">
+                    <input type="number" id="show-div">
+                    <label style="color: rgb(255, 0, 255);" for="mul">check for Multiplication</label><input
+                        style="width: 100px; height: 17px;" type="checkbox" id="check-multiplication">
+                    <input type="number" id="show-mul">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const num1 = document.getElementById("num-1");
+            const num2 = document.getElementById("num-2");
+            const checkDivision = document.getElementById("check-division");
+            const checkMultiplication = document.getElementById("check-multiplication");
+            const showDiv = document.getElementById("show-div");
+            const showMul = document.getElementById("show-mul");
+
+            function calculateResults() {
+                const val1 = parseFloat(num1.value);
+                const val2 = parseFloat(num2.value);
+
+                if (!isNaN(val1) && !isNaN(val2)) {
+                    if (checkDivision.checked) {
+                        if (val2 !== 0) {
+                            showDiv.value = (val1 / val2).toFixed(2);
+                        } else {
+                            showDiv.value = `Error`;
+                        }
+                    } else {
+                        showDiv.value = "";
+                    }
+
+                    if (checkMultiplication.checked) {
+                        showMul.value = (val1 * val2).toFixed(2);
+                    } else {
+                        showMul.value = "";
+                    }
+                } else {
+                    showDiv.value = "";
+                    showMul.value = "";
+                }
+            }
+
+            num1.addEventListener("input", calculateResults);
+            num2.addEventListener("input", calculateResults);
+            checkDivision.addEventListener("change", calculateResults);
+            checkMultiplication.addEventListener("change", calculateResults);
+        });
+
+
+    </script>
+
+</body>
+
+</html>

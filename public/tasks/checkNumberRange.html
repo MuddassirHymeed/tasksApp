@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Number Range</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Karla", sans-serif;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    background-color: #d2c7c7;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+    position: static;
+}
+
+.main .wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main .wrapper .check-num-range{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+    background-color: #f3ebeb;
+    padding: 15px;
+    max-width: 600px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.main .wrapper .check-num-range > h1 {
+    width: 100%;
+    background-color: teal;
+    font-size: 2vw;
+    padding: 5px;
+    color: #000;
+    font-weight: 600;
+    text-align: center;
+}
+
+.main .wrapper .check-num-range .content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.main .wrapper .check-num-range .content .headline {
+    font-size: 1.2vw;
+    padding: 5px;
+    font-weight: 500;
+    color: #000;
+}
+
+.main .wrapper .check-num-range .content input {
+    padding: 5px;
+    width: 100%;
+    font-size: 1.1vw;
+    font-weight: 600;
+    color: #000;
+}
+
+.main .wrapper .check-num-range .content .check{
+    padding: 0.5vw 1vw;
+    font-size: 1.1vw;
+    font-weight: 600;
+    color: #000;
+}
+
+
+
+
+
+@media (max-width:885px) {
+    .main {
+        width: 100%;
+        height: 100%;
+        position: static;
+    }
+
+    .main .wrapper {
+        width: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .main .wrapper .check-num-range{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 5px;
+        background-color: #f3ebeb;
+        padding: 15px;
+        max-width: 600px;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .main .wrapper .check-num-range > h1 {
+        font-size: 4.8vw;
+    }
+
+    .main .wrapper .check-num-range .content {
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .main .wrapper .check-num-range .content .headline {
+        font-size: 3.7vw;
+    }
+
+    .main .wrapper .check-num-range .content input {
+        font-size: 3.2vw;
+    }
+
+    .main .wrapper .check-num-range .content .check {
+        padding: 0.5vw 1vw;
+        font-size: 3.5vw;
+        font-weight: 600;
+        color: #000;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="check-num-range">
+                <h1>Check Number Range</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to check if two given integer values are in the range 50..99 (inclusive). Return true if either of them are in the said range.
+                    </p>
+                    <input type="number" id="frst-num" placeholder="Enter a first Number">
+                    <input type="number" id="scnd-num" placeholder="Enter a second Number">
+                    <input type="text" id="result" placeholder="Result">
+                    <button class="check">Check</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.querySelector('.check').addEventListener('click' , function (){
+            
+            const num1 = parseInt(document.querySelector('#frst-num').value);
+            const num2 = parseInt(document.querySelector('#scnd-num').value);
+            const chkresult = document.querySelector('#result')
+
+            if((num1 >= 50 && num1 <= 99) || (num2 >= 50 && num2 <= 99)){
+                chkresult.value = true
+            }else{
+                chkresult.value = false
+            }
+
+        },false)
+
+
+    </script>
+</body>
+
+</html>

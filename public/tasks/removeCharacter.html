@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Character</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #d2c7c7;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .rmve-chr {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .rmve-chr>h1 {
+            width: 100%;
+            background-color: teal;
+            font-size: 2vw;
+            padding: 5px;
+            color: #000;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .main .wrapper .rmve-chr .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .main .wrapper .rmve-chr .content .headline {
+            font-size: 1.2vw;
+            padding: 5px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .main .wrapper .rmve-chr .content input {
+            padding: 5px;
+            width: 100%;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .main .wrapper .rmve-chr .content .remove {
+            padding: 0.5vw 1vw;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+
+
+
+
+        @media (max-width:885px) {
+            .main {
+                width: 100%;
+                height: 100%;
+                position: static;
+            }
+
+            .main .wrapper {
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .main .wrapper .rmve-chr {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 5px;
+                background-color: #f3ebeb;
+                padding: 15px;
+                max-width: 600px;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            .main .wrapper .rmve-chr>h1 {
+                font-size: 4.8vw;
+            }
+
+            .main .wrapper .rmve-chr .content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .main .wrapper .rmve-chr .content .headline {
+                font-size: 3.7vw;
+            }
+
+            .main .wrapper .rmve-chr .content input {
+                font-size: 3.2vw;
+            }
+
+            .main .wrapper .rmve-chr .content .remove {
+                padding: 0.5vw 1vw;
+                font-size: 3.5vw;
+                font-weight: 600;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="rmve-chr">
+                <h1>Remove Character</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to remove a character at the specified position of a given string and
+                        return the new string.
+                    </p>
+                    <input type="text" id="enter-str" placeholder="Enter a String">
+                    <input type="number" id="index-str" placeholder="Enter a position from removing character">
+                    <input type="text" id="new-rtn-str" placeholder="New String">
+
+                    <button class="remove">Remove</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        document.querySelector('.remove').addEventListener("click", function (e) {
+            const inputString = document.querySelector('#enter-str').value
+            const inputPosition = parseInt(document.querySelector('#index-str').value)
+
+            if (inputString === "" || isNaN(inputPosition) || inputPosition < 0 || inputPosition >= inputString.length) {
+                alert("Enter a valid string and position.");
+                return;
+            }
+
+            let newStr = inputString.split("");
+            newStr.splice(inputPosition, 1);
+            document.getElementById("new-rtn-str").value = `${newStr.join("")} ${newStr.join("").length}`;
+            
+
+        }, false)
+
+    </script>
+</body>
+
+</html>

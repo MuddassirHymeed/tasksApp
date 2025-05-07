@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple of 3 or 7</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Karla", sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #d2c7c7;
+        }
+
+        .main {
+            width: 100%;
+            height: 100%;
+            position: static;
+        }
+
+        .main .wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main .wrapper .mul-3-7 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            background-color: #f3ebeb;
+            padding: 15px;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .main .wrapper .mul-3-7>h1 {
+            width: 100%;
+            background-color: teal;
+            font-size: 2vw;
+            padding: 5px;
+            color: #000;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .main .wrapper .mul-3-7 .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .main .wrapper .mul-3-7 .content .headline {
+            font-size: 1.2vw;
+            padding: 5px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .main .wrapper .mul-3-7 .content input {
+            padding: 5px;
+            width: 100%;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .main .wrapper .mul-3-7 .content .status {
+            padding: 0.5vw 1vw;
+            font-size: 1.1vw;
+            font-weight: 600;
+            color: #000;
+        }
+
+
+
+
+
+        @media (max-width:885px) {
+            .main {
+                width: 100%;
+                height: 100%;
+                position: static;
+            }
+
+            .main .wrapper {
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .main .wrapper .mul-3-7 {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                gap: 5px;
+                background-color: #f3ebeb;
+                padding: 15px;
+                max-width: 600px;
+                height: auto;
+                border-radius: 10px;
+            }
+
+            .main .wrapper .mul-3-7>h1 {
+                font-size: 4.8vw;
+            }
+
+            .main .wrapper .mul-3-7 .content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .main .wrapper .mul-3-7 .content .headline {
+                font-size: 3.7vw;
+            }
+
+            .main .wrapper .mul-3-7 .content input {
+                font-size: 3.2vw;
+            }
+
+            .main .wrapper .mul-3-7 .content .status {
+                padding: 0.5vw 1vw;
+                font-size: 3.5vw;
+                font-weight: 600;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="main" id="main">
+        <div class="wrapper">
+            <div class="mul-3-7">
+                <h1>Multiple of 3 or 7</h1>
+                <div class="content">
+                    <p class="headline">
+                        Write a JavaScript program to check if a given positive number is a multiple of 3 or a multiple
+                        of 7.
+                    </p>
+                    <input type="number" id="num" placeholder="Enter a Number">
+                    <input type="text" id="check-sts" placeholder="Status is">
+                    <button class="status">Status</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+        document.querySelector(".status").addEventListener("click", function () {
+            let num = parseInt(document.getElementById("num").value);
+            let status = document.getElementById("check-sts");
+
+            if (!num || num < 0) {
+                status.value = "Please enter a positive number";
+            } else if (num % 3 === 0 && num % 7 === 0) {
+                status.value = "Given number is a multiple of both 3 and 7";
+            } else if (num % 3 === 0) {
+                status.value = "Given number is a multiple of 3";
+            } else if (num % 7 === 0) {
+                status.value = "Given number is a multiple of 7";
+            } else {
+                status.value = "Given number is not a multiple of 3 or 7";
+            }
+        });
+
+
+
+    </script>
+</body>
+
+</html>
