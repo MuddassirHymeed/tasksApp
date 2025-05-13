@@ -1,1 +1,28 @@
-node_modules
+# Node.js dependencies
+node_modules/
+
+# Vite build output
+dist/
+
+# Firebase
+.firebase/
+.firebase-debug.log
+
+# Environment variables
+.env
+.env.*
+*.env
+
+# Editor settings
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Custom files
+codeflow.mermaid

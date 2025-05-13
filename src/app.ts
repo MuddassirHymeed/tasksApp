@@ -3,24 +3,26 @@ import { getFirestore, collection, query, orderBy, limit, startAfter, getDocs, D
 
 // firebase configration
 const firebaseConfig = {
-  apiKey: "AIzaSyBboqAV9ZBgIESiioqIDJ5k6xy6p6JoieM",
-  authDomain: "tasks-list-app-4b02e.firebaseapp.com",
-  projectId: "tasks-list-app-4b02e",
-  storageBucket: "tasks-list-app-4b02e.appspot.com",
-  messagingSenderId: "892735097",
-  appId: "1:892735097:web:fc53680b183c113943cea8"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// task structure
 interface Task {
   id: string;
   name: string;
   file: string;
 }
 
+// taskListItem as File consider
 interface TaskListItem extends HTMLLIElement {
   file: string;
 }
@@ -87,31 +89,18 @@ function toggleSidebar() {
 async function fetchTasks(lastDoc: DocumentData | null = null): Promise<Task[]> {
   try {
     const tasksRef = collection(db, 'tasks');
-    let q;
-    
+    let tasksQuery;
     if (lastDoc) {
-      q = query(
-        tasksRef,
-        orderBy('name'),
-        startAfter(lastDoc),
-        limit(TASKS_PER_PAGE)
-      );
+      tasksQuery = query(tasksRef,orderBy('name'),startAfter(lastDoc),limit(TASKS_PER_PAGE));
     } else {
-      q = query(
-        tasksRef,
-        orderBy('name'),
-        limit(TASKS_PER_PAGE)
-      );
+      tasksQuery = query(tasksRef,orderBy('name'),limit(TASKS_PER_PAGE));
     }
 
-    const snapshot = await getDocs(q);
+    const snapshot = await getDocs(tasksQuery);
     const tasks: Task[] = [];
     
     snapshot.forEach(doc => {
-      tasks.push({
-        id: doc.id,
-        ...doc.data()
-      } as Task);
+      tasks.push({ id: doc.id,...doc.data()} as Task);
     });
 
     if (snapshot.docs.length > 0) {
@@ -125,7 +114,7 @@ async function fetchTasks(lastDoc: DocumentData | null = null): Promise<Task[]> 
   }
 }
 
-// Load initial tasks
+// Load initial tasks first 10 tasks call 
 async function loadInitialTasks() {
   state.isLoading = true;
   const tasks = await fetchTasks();
