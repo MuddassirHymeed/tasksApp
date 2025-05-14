@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, query, orderBy, limit, startAfter, getDocs, DocumentData } from 'firebase/firestore';
+import { getFirestore, collection, where, query, orderBy, limit, startAfter, getDocs, DocumentData } from 'firebase/firestore';
 
 // firebase configration
 const firebaseConfig = {
@@ -191,7 +191,6 @@ function renderTasks(tasks: Task[]) {
     `;
     return;
   }
-
   const fragment = document.createDocumentFragment();
   tasks.forEach(task => {
     const listItem = document.createElement('li') as TaskListItem;
@@ -241,22 +240,45 @@ function sortTasks() {
   updateURL();
 }
 
-// Search tasks
-function searchTasks() {
+// Search tasks with Firestore query
+async function searchTasks() {
   const searchTerm = elements.searchInput.value.trim().toLowerCase();
-  state.isAscending = false;
-  
-  state.filteredTasks = state.allTasks.filter(task => {
-    const name = task.name.toLowerCase();
-    const file = task.file.toLowerCase();
-    const wordRegex = new RegExp(`\\b${searchTerm}\\b`, 'i');
-    return wordRegex.test(name) || wordRegex.test(file);
-  });
-
+  if (searchTerm === "") {
+  state.filteredTasks = [];
   elements.taskList.innerHTML = '';
-  renderTasks(state.filteredTasks);
+  renderTasks(state.allTasks); 
   updateURL();
+  return;
 }
+  state.isLoading = true;
+  try {
+
+    const tasksRef = collection(db, 'tasks');
+    const q = query(tasksRef, 
+      where('searchName', '>=', searchTerm), 
+      where('searchName', '<=', searchTerm + '\uf8ff')
+    );
+
+    const querySnapshot = await getDocs(q);
+    const tasks: Task[] = [];
+
+    querySnapshot.forEach((doc) => {
+      tasks.push({ id: doc.id, ...doc.data() } as Task);
+    });
+
+    state.filteredTasks = tasks;
+
+    elements.taskList.innerHTML = '';
+    renderTasks(state.filteredTasks);
+
+    updateURL();
+  } catch (error) {
+    console.error('Error searching tasks:', error);
+  } finally {
+    state.isLoading = false;
+  }
+}
+
 
 // Update URL with current state
 function updateURL() {
